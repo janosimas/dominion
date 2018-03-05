@@ -60,9 +60,9 @@ let createPlayer = () => {
 
 /**
  * Draw a number of cards from the deck into the player hand
- * 
+ *
  * if no cards in the deck, shuffle the discard pile
- * 
+ *
  * @param {Player object} player Player drawing the cards
  * @param {Number} [number=1] Number of cards to draw
  */
@@ -88,7 +88,7 @@ let draw = (player, number) => {
 
 /**
  * Check if a card can be played
- * 
+ *
  * @param {*} card Card played
  * @param {*} G Current board of the game
  * @param {*} ctx Metadata of the game
@@ -105,7 +105,7 @@ let canPlay = (card, G, ctx) => {
 
 /**
  * Activate the effects of the card.
- * 
+ *
  * @param {string} cardName Card activated by player
  * @param {GameBoard} G Current game state
  * @param {GameMetadata} ctx Current game metadata
@@ -144,10 +144,10 @@ let currentPlayer = (G, ctx) => {
 
 /**
  * Discard a number of cards from the player hand into the discard pile
- * 
+ *
  * if number is greater than the number of cards in
  * the player hand, discard all cards
- * 
+ *
  * @param {Player object} player Player discarding the cards
  * @param {Number} [number=1] Number of cards to discard
  */
@@ -169,17 +169,22 @@ let getBoard = (G) => {
 }
 
 const Dominion = Game({
-  setup: () => ({
-    victory: base_victory,
-    treasure: base_treasure,
-    kingdom: base_action,
-    play_area: [],
-    players: {
-      0: { ...createPlayer(), name: 'Jano' },
-      1: { ...createPlayer(), name: 'Lorena' },
-    },
-    playerView: PlayerView.STRIP_SECRETS
-  }),
+  setup: (numPlayers) => {
+    let G = {
+      victory: base_victory,
+      treasure: base_treasure,
+      kingdom: base_action,
+      play_area: [],
+      players: {},
+      playerView: PlayerView.STRIP_SECRETS
+    };
+
+    for (var i = 0; i < numPlayers; i++) {
+      G.players[i] = { ...createPlayer(), name: 'Player '+(i+1) };
+    }
+
+    return G;
+  },
 
   moves: {
     onClickVictory(G, ctx, index) {
@@ -324,7 +329,7 @@ class DominionBoard extends React.Component {
 
   /**
    * Event of clicking in an item of the board.
-   * 
+   *
    * @param {number} id Id of the clicked item.
    */
   onClickVictory(id, self) {
@@ -376,11 +381,11 @@ class DominionBoard extends React.Component {
     for (let index = 0; index < cards.length; index++) {
       let className = 'card';
       if (highlight) {
-        if (ctx.phase == phases.ACTION_PHASE
+        if (ctx.phase === phases.ACTION_PHASE
             && cards[index].type.includes(types.ACTION))
           className += ' highlight';
 
-        if (ctx.phase == phases.BUY_PHASE
+        if (ctx.phase === phases.BUY_PHASE
             && cards[index].type.includes(types.TREASURE))
           className += ' highlight';
       }
@@ -460,6 +465,7 @@ class DominionBoard extends React.Component {
 
 const App = Client({
   game: Dominion,
+  numPlayers: 4,
   board: DominionBoard
 });
 
