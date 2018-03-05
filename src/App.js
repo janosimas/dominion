@@ -114,7 +114,7 @@ let playCard = (card, G, ctx) => {
   let Gcopy = getBoard(G);
   let player = currentPlayer(Gcopy, ctx);
 
-  if(ctx.phase === phases.ACTION_PHASE)
+  if (ctx.phase === phases.ACTION_PHASE)
     player.actions--;
 
   if (card.cards) {
@@ -306,7 +306,7 @@ const Dominion = Game({
       },
       {
         name: phases.BUY_PHASE,
-        allowedMoves: ['onClickHand', 'onClickVictory', 'onClickKingdom', 'onClickTreasure'],
+        allowedMoves: ['onClickHand', 'onClickVictory', 'onClickKingdom', 'onClickTreasure']
       },
     ],
   },
@@ -318,41 +318,42 @@ class DominionBoard extends React.Component {
   }
 
   onClickEndTurn() {
+    this.props.events.endPhase();
     this.props.events.endTurn();
   }
-  
+
   /**
    * Event of clicking in an item of the board.
    * 
    * @param {number} id Id of the clicked item.
    */
-  onClickVictory(id) {
-    if (this.isActive(id)) {
-      this.props.moves.onClickVictory(id);
+  onClickVictory(id, self) {
+    if (self.isActive(id)) {
+      self.props.moves.onClickVictory(id);
     }
   }
 
-  onClickTreasure(id) {
-    if (this.isActive(id)) {
-      this.props.moves.onClickTreasure(id);
+  onClickTreasure(id, self) {
+    if (self.isActive(id)) {
+      self.props.moves.onClickTreasure(id);
     }
   }
 
-  onClickKingdom(id) {
-    if (this.isActive(id)) {
-      this.props.moves.onClickKingdom(id);
+  onClickKingdom(id, self) {
+    if (self.isActive(id)) {
+      self.props.moves.onClickKingdom(id);
     }
   }
 
-  onClickHand(id) {
-    if (this.isActive(id)) {
-      this.props.moves.onClickHand(id);
-      let player = currentPlayer(this.props.G, this.props.ctx);
-      if (this.props.ctx.phase === phases.ACTION_PHASE && player.actions === 0)
-        this.props.events.endTurn();
+  onClickHand(id, self) {
+    if (self.isActive(id)) {
+      self.props.moves.onClickHand(id);
+      let player = currentPlayer(self.props.G, self.props.ctx);
+      if (self.props.ctx.phase === phases.ACTION_PHASE && player.actions === 0)
+        self.props.events.endTurn();
 
-      if (this.props.ctx.phase === phases.BUY_PHASE && player.buy === 0)
-        this.props.events.endTurn();
+      if (self.props.ctx.phase === phases.BUY_PHASE && player.buy === 0)
+        self.props.events.endTurn();
     }
   }
 
@@ -361,28 +362,38 @@ class DominionBoard extends React.Component {
     return true;
   }
 
-  renderMainBoard(G) {
+  renderMainBoard(G, ctx) {
     let tbody = [];
-    tbody.push(...this.renderCards(G.victory));
-    tbody.push(...this.renderCards(G.treasure));
-    tbody.push(...this.renderCards(G.kingdom));
+    tbody.push(...this.renderCards(G.victory, this.onClickVictory, G, ctx));
+    tbody.push(...this.renderCards(G.treasure, this.onClickTreasure, G, ctx));
+    tbody.push(...this.renderCards(G.kingdom, this.onClickKingdom, G, ctx));
 
     return tbody;
   }
 
-  renderCards(cards) {
-    
+  renderCards(cards, onClickAction, G, ctx, highlight) {
     let tbody = [];
     for (let index = 0; index < cards.length; index++) {
+      let className = 'card';
+      if (highlight) {
+        if (ctx.phase == phases.ACTION_PHASE
+            && cards[index].type.includes(types.ACTION))
+          className += ' highlight';
+
+        if (ctx.phase == phases.BUY_PHASE
+            && cards[index].type.includes(types.TREASURE))
+          className += ' highlight';
+      }
+
       tbody.push(
-        <span className='card' onClick={() => this.onClickHand(index)}>
+        <span className={className} onClick={() => onClickAction(index, this)}>
           <img src={cards[index].image} alt={cards[index].name} />
         </ span>);
     }
     return tbody;
   }
 
-  renderPlayerBoard(player) {
+  renderPlayerBoard(player, G, ctx) {
     let tbody = [];
     let deck = {
       margin: '15px'
@@ -392,7 +403,7 @@ class DominionBoard extends React.Component {
         <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />
       </ span>);
 
-    tbody.push(...this.renderCards(player.hand));
+    tbody.push(...this.renderCards(player.hand, this.onClickHand, G, ctx, true));
     return tbody;
   }
 
@@ -410,7 +421,7 @@ class DominionBoard extends React.Component {
     controls.push(<br />);
     controls.push(<span>Buy: {player.buy}</span>);
     controls.push(<br />);
-    if(ctx.phase === phases.ACTION_PHASE)
+    if (ctx.phase === phases.ACTION_PHASE)
       controls.push(<button type="button" onClick={() => this.onClickEndPhase()}>end phase</button>);
     else
       controls.push(<button type="button" onClick={() => this.onClickEndTurn()}>end turn</button>);
@@ -422,9 +433,9 @@ class DominionBoard extends React.Component {
     if (this.props.ctx.gameover !== null) {
       winner = <div>Winner: {this.props.ctx.gameover}</div>;
     }
-    const mainBoard = this.renderMainBoard(this.props.G);
-    const playArea = this.renderCards(this.props.G.play_area);
-    const playerBoard = this.renderPlayerBoard(currentPlayer(this.props.G, this.props.ctx));
+    const mainBoard = this.renderMainBoard(this.props.G, this.props.ctx);
+    const playArea = this.renderCards(this.props.G.play_area, this.props.G, this.props.ctx);
+    const playerBoard = this.renderPlayerBoard(currentPlayer(this.props.G, this.props.ctx), this.props.G, this.props.ctx);
     const control = this.renderControls(this.props.G, this.props.ctx);
 
     return (

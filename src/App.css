@@ -32,9 +32,12 @@
   margin: 5px;
 }
 
+.highlight {
+  border: 5px solid blue;
+}
+
 .card img {
   width: 100px;
-  height: 161px;
 }
 
 .player-board {
