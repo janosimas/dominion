@@ -22,6 +22,61 @@
   font-size: large;
 }
 
+.card {
+  background: #fff;
+  margin: 0;
+  text-align: center;
+  border: 1px solid black;
+  position: relative;
+  display:inline-block;
+  margin: 5px;
+}
+
+.card img {
+  width: 100px;
+  height: 161px;
+}
+
+.player-board {
+  background: #ffffcc;
+  padding: 10px;
+  margin: 0 auto;
+  width: 70%;
+  height: 322px;
+  border: 1px solid black;
+  overflow: auto;
+}
+
+.play-board {
+  background: #ffffcc;
+  padding: 10px;
+  margin: 0 auto;
+  width: 70%;
+  height: 161px;
+  border: 1px solid black;
+  overflow: auto;
+}
+
+.buy-board {
+  background: #ffffcc;
+  padding: 10px;
+  margin: 0 auto;
+  width: 700px;
+  height: 360px;
+  border: 1px solid black;
+  overflow: auto;
+}
+
+.controls {
+  background: #ffffff;
+  position: fixed;
+  right: 0;
+  top: 0;
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid black;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

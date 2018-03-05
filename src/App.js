@@ -7,6 +7,8 @@ import base_action from './cards/base_action';
 import types from './cards/card_types';
 import phases from './phases';
 
+import './App.css';
+
 function IsVictory(cells) {
 
 }
@@ -112,7 +114,8 @@ let playCard = (card, G, ctx) => {
   let Gcopy = getBoard(G);
   let player = currentPlayer(Gcopy, ctx);
 
-  player.actions--;
+  if(ctx.phase === phases.ACTION_PHASE)
+    player.actions--;
 
   if (card.cards) {
     draw(player, card.cards);
@@ -172,8 +175,8 @@ const Dominion = Game({
     kingdom: base_action,
     play_area: [],
     players: {
-      0: createPlayer(),
-      1: createPlayer()
+      0: { ...createPlayer(), name: 'Jano' },
+      1: { ...createPlayer(), name: 'Lorena' },
     },
     playerView: PlayerView.STRIP_SECRETS
   }),
@@ -304,10 +307,6 @@ const Dominion = Game({
       {
         name: phases.BUY_PHASE,
         allowedMoves: ['onClickHand', 'onClickVictory', 'onClickKingdom', 'onClickTreasure'],
-        endPhaseIf: (G, ctx) => {
-          const player = currentPlayer(G, ctx);
-          return player.buy === 0;
-        }
       },
     ],
   },
@@ -317,6 +316,11 @@ class DominionBoard extends React.Component {
   onClickEndPhase() {
     this.props.events.endPhase();
   }
+
+  onClickEndTurn() {
+    this.props.events.endTurn();
+  }
+  
   /**
    * Event of clicking in an item of the board.
    * 
@@ -325,27 +329,18 @@ class DominionBoard extends React.Component {
   onClickVictory(id) {
     if (this.isActive(id)) {
       this.props.moves.onClickVictory(id);
-      let player = currentPlayer(this.props.G, this.props.ctx);
-      if (player.buy === 0)
-        this.props.events.endTurn();
     }
   }
 
   onClickTreasure(id) {
     if (this.isActive(id)) {
       this.props.moves.onClickTreasure(id);
-      let player = currentPlayer(this.props.G, this.props.ctx);
-      if (player.buy === 0)
-        this.props.events.endTurn();
     }
   }
 
   onClickKingdom(id) {
     if (this.isActive(id)) {
       this.props.moves.onClickKingdom(id);
-      let player = currentPlayer(this.props.G, this.props.ctx);
-      if (player.buy === 0)
-        this.props.events.endTurn();
     }
   }
 
@@ -366,81 +361,59 @@ class DominionBoard extends React.Component {
     return true;
   }
 
-  renderMainBoard(G, cellStyle) {
+  renderMainBoard(G) {
     let tbody = [];
-    let victory_cards = [];
-    for (let index = 0; index < G.victory.length; index++) {
-      victory_cards.push(
-        <td style={cellStyle} key={index} onClick={() => this.onClickVictory(index)}>
-          {
-            G.victory[index].count > 0 &&
-            <img style={cellStyle} src={G.victory[index].image} alt={G.victory[index].name} />
-          }
-        </td>);
-    }
-    tbody.push(<tr>{victory_cards}</tr>);
-
-    let treasure_cards = [];
-    for (let index = 0; index < G.treasure.length; index++) {
-      treasure_cards.push(
-        <td style={cellStyle} key={index} onClick={() => this.onClickTreasure(index)}>
-          {
-            G.treasure[index].count > 0 &&
-            <img style={cellStyle} src={G.treasure[index].image} alt={G.treasure[index].name} />
-          }
-        </td>);
-    }
-    tbody.push(<tr>{treasure_cards}</tr>);
-
-    // for (let line = 0; line < 2; line++) {
-    let kingdom_cards = [];
-    for (let index = 0; index < G.kingdom.length; index++) {
-      kingdom_cards.push(
-        <td style={cellStyle} key={index} onClick={() => this.onClickKingdom(index)}>
-          {
-            G.kingdom[index].count > 0 &&
-            <img style={cellStyle} src={G.kingdom[index].image} alt={G.kingdom[index].name} />
-          }
-        </td>);
-    }
-    tbody.push(<tr>{kingdom_cards}</tr>);
-    // }
+    tbody.push(...this.renderCards(G.victory));
+    tbody.push(...this.renderCards(G.treasure));
+    tbody.push(...this.renderCards(G.kingdom));
 
     return tbody;
   }
 
-  renderPlayArea(G, cellStyle) {
+  renderCards(cards) {
+    
     let tbody = [];
-    for (let index = 0; index < G.play_area.length; index++) {
+    for (let index = 0; index < cards.length; index++) {
       tbody.push(
-        <td>
-          <img style={cellStyle} src={G.play_area[index].image} alt={G.play_area[index].name} />
-        </td>);
+        <span className='card' onClick={() => this.onClickHand(index)}>
+          <img src={cards[index].image} alt={cards[index].name} />
+        </ span>);
     }
-    return <tr>{tbody}</tr>;
+    return tbody;
   }
 
-  renderPlayerBoard(player, cellStyle) {
+  renderPlayerBoard(player) {
     let tbody = [];
+    let deck = {
+      margin: '15px'
+    }
     tbody.push(
-      <td>
-        <img style={cellStyle} src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />
-      </td>);
+      <span className='card' style={deck}>
+        <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />
+      </ span>);
 
-    for (let index = 0; index < player.hand.length; index++) {
-      tbody.push(
-        <td key={index} onClick={() => this.onClickHand(index)}>
-          <img style={cellStyle} src={player.hand[index].image} alt={player.hand[index].name} />
-        </td>);
-    }
-    return <tr>{tbody}</tr>;
+    tbody.push(...this.renderCards(player.hand));
+    return tbody;
   }
 
-  renderControls() {
+  renderControls(G, ctx) {
+    let player = currentPlayer(G, ctx);
+
     let controls = [];
-    controls.push(<button type="button" onClick={() => this.onClickEndPhase()}>end phase</button>);
+    controls.push(<span>Current player: {player.name}</span>);
     controls.push(<br />);
-    // controls.push(<button type="button" onClick={() => this.onClickEndTurn()}>end turn</button>);
+    controls.push(<span>Current phase: {ctx.phase}</span>);
+    controls.push(<br />);
+    controls.push(<span>Treasure: {player.treasure}</span>);
+    controls.push(<br />);
+    controls.push(<span>Actions: {player.actions}</span>);
+    controls.push(<br />);
+    controls.push(<span>Buy: {player.buy}</span>);
+    controls.push(<br />);
+    if(ctx.phase === phases.ACTION_PHASE)
+      controls.push(<button type="button" onClick={() => this.onClickEndPhase()}>end phase</button>);
+    else
+      controls.push(<button type="button" onClick={() => this.onClickEndTurn()}>end turn</button>);
     return controls;
   }
 
@@ -449,36 +422,26 @@ class DominionBoard extends React.Component {
     if (this.props.ctx.gameover !== null) {
       winner = <div>Winner: {this.props.ctx.gameover}</div>;
     }
-    // 200 x 322
-    const cellStyle = {
-      border: '1px solid #555',
-      width: '100px',
-      height: '161px',
-      textAlign: 'center',
-    };
-
-    const mainBoard = this.renderMainBoard(this.props.G, cellStyle);
-    const playArea = this.renderPlayArea(this.props.G, cellStyle);
-    const playerBoard = this.renderPlayerBoard(currentPlayer(this.props.G, this.props.ctx), cellStyle);
-    const control = this.renderControls();
+    const mainBoard = this.renderMainBoard(this.props.G);
+    const playArea = this.renderCards(this.props.G.play_area);
+    const playerBoard = this.renderPlayerBoard(currentPlayer(this.props.G, this.props.ctx));
+    const control = this.renderControls(this.props.G, this.props.ctx);
 
     return (
       <div>
-        <table id="board">
-          <tbody>{mainBoard}</tbody>
-        </table>
-        <br /><br />
-        <table id="play-area">
-          <tbody>{playArea}</tbody>
-        </table>
-        <br /><br />
-        <table id="player-board">
-          <tbody>{playerBoard}</tbody>
-        </table>
-        <br />
+        <div className='buy-board'>
+          {mainBoard}
+        </div>
+        <div className='play-board'>
+          {playArea}
+        </div>
+        <div className='player-board'>
+          {playerBoard}
+        </div>
         {winner}
-        <br />
-        {control}
+        <div className='controls'>
+          {control}
+        </div>
       </div>
     );
   }
@@ -490,25 +453,3 @@ const App = Client({
 });
 
 export default App;
-
-// import React, { Component } from 'react';
-// import logo from './logo.svg';
-// import './App.css';
-
-// class App extends Component {
-//   render() {
-//     return (
-//       <div className="App">
-//         <header className="App-header">
-//           <img src={logo} className="App-logo" alt="logo" />
-//           <h1 className="App-title">Welcome to React</h1>
-//         </header>
-//         <p className="App-intro">
-//           To get started, edit <code>src/App.js</code> and save to reload.
-//         </p>
-//       </div>
-//     );
-//   }
-// }
-
-// export default App;
