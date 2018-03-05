@@ -28,10 +28,6 @@ Now you can go to `localhost:3000` and check it out.
 
 - Complex card actions (not +cards, +treasure...)
 - Discover how to allow other players do some action not in their turn (ex.: select a card to discard)
-- Some area to show:
-  - current player
-  - current game phase (action, buy)
-  - number of actions/buys available
 - End game condition
 - Victory condition
 - Animate cards
