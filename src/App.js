@@ -430,14 +430,15 @@ class DominionBoard extends React.Component {
       controls.push(<button type="button" onClick={() => this.onClickEndPhase()}>end phase</button>);
     else
       controls.push(<button type="button" onClick={() => this.onClickEndTurn()}>end turn</button>);
+
+    // if (this.props.ctx.gameover !== null) {
+    //   controls.push(<div>Winner: {this.props.ctx.gameover}</div>);
+    // }
+
     return controls;
   }
 
   render() {
-    let winner = '';
-    if (this.props.ctx.gameover !== null) {
-      winner = <div>Winner: {this.props.ctx.gameover}</div>;
-    }
     const mainBoard = this.renderMainBoard(this.props.G, this.props.ctx);
     const playArea = this.renderCards(this.props.G.play_area, this.props.G, this.props.ctx);
     const playerBoard = this.renderPlayerBoard(currentPlayer(this.props.G, this.props.ctx), this.props.G, this.props.ctx);
@@ -454,7 +455,6 @@ class DominionBoard extends React.Component {
         <div className='player-board'>
           {playerBoard}
         </div>
-        {winner}
         <div className='controls'>
           {control}
         </div>
@@ -465,7 +465,7 @@ class DominionBoard extends React.Component {
 
 const App = Client({
   game: Dominion,
-  numPlayers: 4,
+  numPlayers: 2,
   board: DominionBoard
 });
 
