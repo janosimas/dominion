@@ -172,7 +172,7 @@ const Dominion = Game({
     };
 
     for (var i = 0; i < numPlayers; i++) {
-      G.players[i] = { ...createPlayer(), name: 'Player '+(i+1) };
+      G.players[i] = { ...createPlayer(), name: 'Player ' + (i + 1) };
     }
 
     return G;
@@ -376,11 +376,11 @@ class DominionBoard extends React.Component {
       let className = 'card';
       if (highlight) {
         if (ctx.phase === phases.ACTION_PHASE
-            && cards[index].type.includes(types.ACTION))
+          && cards[index].type.includes(types.ACTION))
           className += ' highlight';
 
         if (ctx.phase === phases.BUY_PHASE
-            && cards[index].type.includes(types.TREASURE))
+          && cards[index].type.includes(types.TREASURE))
           className += ' highlight';
       }
 
