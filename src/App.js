@@ -149,18 +149,10 @@ let currentPlayer = (G, ctx) => {
  * the player hand, discard all cards
  *
  * @param {Player object} player Player discarding the cards
- * @param {Number} [number=1] Number of cards to discard
+ * @param {Number} index Index of the card to discard
  */
-let discard = (player, number) => {
-  number = number || 1;
-  for (let index = 0; index < number; index++) {
-    if (player.hand.length === 0) {
-      // if no cards in the player hand
-      // nothing to do
-      return player
-    }
-    player.discard.push(player.hand.pop());
-  }
+let discard = (player, index) => {
+  player.discard.push(player.hand.splice(index, 1)[0]);
   return player;
 }
 
@@ -285,7 +277,9 @@ const Dominion = Game({
 
       player.discard.push(...Gcopy.play_area);
       Gcopy.play_area = [];
-      discard(player, player.hand.length);
+      for (; player.hand.length > 0;) {
+        discard(player, 0);
+      }
       draw(player, 5);
       return Gcopy;
     },
@@ -465,7 +459,7 @@ class DominionBoard extends React.Component {
 
 const App = Client({
   game: Dominion,
-  numPlayers: 2,
+  numPlayers: 1,
   board: DominionBoard
 });
 
