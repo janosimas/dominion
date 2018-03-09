@@ -1,20 +1,17 @@
-import types from '../card_types'
+import types from '../../card_types'
 import React from 'react';
 import { Card } from 'boardgame.io/ui';
 
 const card = Card({
-  name: "Festival",
+  name: "Copper",
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
-  front: <img src='http://wiki.dominionstrategy.com/images/thumb/e/ec/Festival.jpg/200px-Festival.jpg' alt="Festival" />,
+  front: <img src='http://wiki.dominionstrategy.com/images/thumb/f/fb/Copper.jpg/200px-Copper.jpg' alt="Copper" />,
   isFaceUp: true,
   canHover: true,
   count: 10,
-  cost: 5,
-  buy: 1,
-  actions: 2,
-  treasure: 2,
-  type: [types.ACTION],
-
+  cost: 0,
+  treasure: 1,
+  type: [types.TREASURE],
 });
 
 export default card;

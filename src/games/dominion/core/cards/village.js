@@ -1,4 +1,4 @@
-import types from '../card_types'
+import types from '../../card_types'
 import React from 'react';
 import { Card } from 'boardgame.io/ui';
 
