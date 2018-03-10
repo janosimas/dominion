@@ -12,6 +12,7 @@ const card = Card({
   cost: 8,
   victory: 6,
   type: [types.VICTORY],
+  className: 'card',
 });
 
 export default card;

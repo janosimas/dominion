@@ -14,7 +14,7 @@ const card = Card({
   actions: 2,
   treasure: 2,
   type: [types.ACTION],
-
+  className: 'card',
 });
 
 export default card;

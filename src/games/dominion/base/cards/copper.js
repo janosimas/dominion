@@ -1,4 +1,4 @@
-import types from '../../cardTypes'
+import types from '../../cardTypes';
 import React from 'react';
 import { Card } from 'boardgame.io/ui';
 
@@ -12,6 +12,11 @@ const card = Card({
   cost: 0,
   treasure: 1,
   type: [types.TREASURE],
+  className: 'card',
+  onClick: () => {
+    console.log("I'm here!!!");
+    console.log(this);
+  }
 });
 
 export default card;

@@ -13,7 +13,7 @@ const card = Card({
   buy: 1,
   treasure: 2,
   type: [types.ACTION],
-
+  className: 'card',
 });
 
 export default card;

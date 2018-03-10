@@ -6,7 +6,7 @@ import duchy from './cards/duchy'
 import province from './cards/province'
 
 const module = {
-  cards = [ copper, 
+  cards: [  copper, 
             silver,
             gold,
             estate,

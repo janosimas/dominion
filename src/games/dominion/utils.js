@@ -1,12 +1,15 @@
-import { currentPlayer, getState } from '../utils'
+import { Random } from 'boardgame.io/core';
+
+import { currentPlayer } from '../utils'
 import phases from './phases'
+import types from './cardTypes'
 
 import copper from './base/cards/copper'
 import estate from './base/cards/estate'
 
 let populateModule = (mod, cards) => {
   mod.cards = cards;
-  for (card in cards) {
+  for (const card in cards) {
     if (card.custom_phases)
       mod.custom_phases.push(...card.custom_phases);
     if (card.custom_moves)
@@ -15,8 +18,8 @@ let populateModule = (mod, cards) => {
 }
 
 let populateMoves = (game, modules) => {
-  for(mod in modules) {
-    for (custom_move in mod.custom_moves) {
+  for(const mod in modules) {
+    for (const custom_move in mod.custom_moves) {
       game.moves[custom_move.name] = custom_move.move;
     }
   }
@@ -57,7 +60,7 @@ let playCard = (state, ctx, card) => {
     player.actions--;
 
   if(card.onPlay) {
-    card.onPlay(G, ctx);
+    card.onPlay(state, ctx);
   } else {
     defaultAction(state, ctx, card);
   }
@@ -86,14 +89,17 @@ let buyCard = (state, ctx, player, card) => {
  * @param {GameMetadata} ctx Metadata of the game
  */
 let canPlay = (state, ctx, card) => {
-  if (ctx.phase === phases.ACTION_PHASE)
+  if (ctx.phase === phases.ACTION_PHASE) {
     return card.type.includes(types.ACTION);
+  }
 
-  if (ctx.phase === phases.BUY_PHASE)
+  if (ctx.phase === phases.BUY_PHASE) {
     return card.type.includes(types.TREASURE);
+  }
 
-  if (ctx.phase === phases.REACTION_PHASE)
+  if (ctx.phase === phases.REACTION_PHASE) {
     return card.type.includes(types.REACTION);
+  }
 
   return false;
 }
@@ -154,14 +160,14 @@ let createPlayer = () => {
     buy: 1
   };
 
-  player = draw(player, 5);
+  player = drawCard(player, 5);
   return player;
 }
 
 let populateCardMap = (modules) => {
   let cardMap = new Map();
-  for(mod in modules) {
-    for(card in mod.cards) {
+  for(const mod in modules) {
+    for(const card in mod.cards) {
       cardMap.set(card.name, card);
     }
   }

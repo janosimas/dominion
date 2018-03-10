@@ -1,4 +1,4 @@
-import populateModule from '../utils'
+import { populateModule } from '../utils'
 
 import festival from './cards/festival'
 import village from './cards/village'
@@ -8,13 +8,13 @@ import woodcutter from './cards/woodcutter'
 import militia from './cards/militia'
 
 
-let module = {
+let mod = {
   cards: [],
   custom_phases: [],
   custom_moves: []
 }
 
-populateModule(module, [ festival,
+populateModule(mod, [ festival,
                          village,
                          laboratory,
                          smith,
@@ -22,4 +22,4 @@ populateModule(module, [ festival,
                          militia
                         ]);
 
-export default module;
+export default mod;

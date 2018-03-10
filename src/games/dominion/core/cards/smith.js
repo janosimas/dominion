@@ -12,7 +12,7 @@ const card = Card({
   cost: 4,
   cards: 3,
   type: [types.ACTION],
-
+  className: 'card',
 });
 
 export default card;

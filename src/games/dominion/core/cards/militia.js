@@ -1,7 +1,9 @@
-import types from '../../cardTypes'
-import phases from '../../phases'
 import React from 'react';
 import { Card } from 'boardgame.io/ui';
+
+import types from '../../cardTypes'
+import phases from '../../phases'
+import { currentPlayer, getState } from '../../../utils'
 
 const card = Card({
   name: "Militia",
@@ -12,17 +14,22 @@ const card = Card({
   cost: 4,
   count: 10,
   treasure: 2,
+  className: 'card',
   type: [types.ACTION],
   onPlay: (G, ctx) => {
-    endTurn();
-    endPhase('militia_discard_phase');
+    const state = getState(G);
+    state.events.endTurn();
+    state.events.endPhase('militia_discard_phase');
+    return state;
   },
   custom_moves: [
     {
       name: 'militia_discard',
       move: (G, ctx) => {
-        G.active_player = currentPlayer(G, ctx);
-        endTurn();
+        const state = getState(G);
+        state.active_player = currentPlayer(state, ctx);
+        state.events.endTurn();
+        return state;
       }
     }
   ],
@@ -31,15 +38,16 @@ const card = Card({
       name: 'militia_discard_phase',
       allowedMoves: ['militia_discard'],
       endTurnIf: (G, ctx) => {
-        let player = currentPlayer(G, ctx);
+        const player = currentPlayer(G, ctx);
         if (G.active_player === player) {
           return false;
         }
         return player.hand.size <= 3;
       },
       endPhaseIf: (G, ctx) => {
+        const player = currentPlayer(G, ctx);
         if (G.active_player === player) {
-          return phases.ACTION_PHASE;;
+          return phases.ACTION_PHASE;
         } else {
           return false;
         }

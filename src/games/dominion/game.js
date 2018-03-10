@@ -1,6 +1,8 @@
+import { Game, PlayerView } from 'boardgame.io/core';
+
 import { currentPlayer, getState, discard } from '../utils'
 import { playCard, buyCard, canPlay, drawCard, createPlayer, populateCardMap, populateMoves } from './utils'
-import types from './cardTypes'
+import phases from './phases'
 
 import baseModule from './base/module'
 import coreModule from './core/module'
@@ -9,12 +11,10 @@ import coreModule from './core/module'
 const Dominion = {
   setup: (numPlayers) => {
     let G = {
-      victory: base_victory,
-      treasure: base_treasure,
-      kingdom: base_action,
       play_area: [],
       players: {},
-      cardMap = populateCardMap([baseModule, coreModule]),
+      cardMap: populateCardMap([baseModule, coreModule]),
+      boardCards: [...baseModule.cards, ...coreModule.cards],
       playerView: PlayerView.STRIP_SECRETS
     };
 
@@ -26,34 +26,36 @@ const Dominion = {
   },
   moves: {
     onClickBoard(G, ctx, key) {
-      const state = getState(G);
+      let state = getState(G);
       const card = state.cardMap[key];
       // Ensure we can't have less then 0 cards.
       if (card.count <= 0) {
         return state;
       }
 
-      const player = currentPlayer(Gcopy, ctx);
+      const player = currentPlayer(state, ctx);
       state = buyCard(state, ctx, player, card);
 
       return state;
     },
     onClickHand(G, ctx, index) {
-      const state = getState(G, ctx);
-      const player = currentPlayer(Gcopy, ctx);
+      let state = getState(G, ctx);
+      const player = currentPlayer(state, ctx);
       const hand = player.hand;
 
       // sanity check
-      if (index < 0 || index > hand.length)
+      if (index < 0 || index > hand.length) {
         return state;
+      }
 
       // can the card be played?
-      if (!canPlay(state, ctx, hand[index]))
+      if (!canPlay(state, ctx, hand[index].props)) {
         return state;
+      }
 
       //TODO: reveal or play card?
-      const card = hand.splice(index, 1)[0];
-      state = playCard(Gcopy, ctx, card);
+      const card = hand.splice(index, 1)[0].props;
+      state = playCard(state, ctx, card);
 
       return state;
     },
@@ -71,7 +73,7 @@ const Dominion = {
       for (; player.hand.length > 0;) {
         discard(player, 0);
       }
-      draw(player, 5);
+      drawCard(player, 5);
       return state;
     },
 
@@ -98,7 +100,6 @@ const Dominion = {
         name: phases.BUY_PHASE,
         allowedMoves: ['onClickHand', 'onClickBoard']
       },
-      ...baseModule.custom_phases,
       ...coreModule.custom_phases
     ],
   },

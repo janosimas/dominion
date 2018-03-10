@@ -13,7 +13,7 @@ const card = Card({
   actions: 1,
   cards: 2,
   type: [types.ACTION],
-
+  className: 'card',
 });
 
 export default card;
