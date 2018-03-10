@@ -4,13 +4,21 @@ import phases from './phases'
 import copper from './base/cards/copper'
 import estate from './base/cards/estate'
 
-let populateModule = (module, cards) => {
-  module.cards = cards;
+let populateModule = (mod, cards) => {
+  mod.cards = cards;
   for (card in cards) {
-    if (card.actions)
-      module.custom_actions.push(...card.custom_actions);
-    if (card.phases)
-      module.custom_moves.push(...card.custom_moves);
+    if (card.custom_phases)
+      mod.custom_phases.push(...card.custom_phases);
+    if (card.custom_moves)
+      mod.custom_moves.push(...card.custom_moves);
+  }
+}
+
+let populateMoves = (game, modules) => {
+  for(mod in modules) {
+    for (custom_move in mod.custom_moves) {
+      game.moves[custom_move.name] = custom_move.move;
+    }
   }
 }
 
@@ -157,8 +165,8 @@ let populateCardMap = (modules) => {
       cardMap.set(card.name, card);
     }
   }
-  
+
   return cardMap;
 }
 
-export { playCard, buyCard, canPlay, drawCard, createPlayer, populateModule, populateCardMap }
+export { playCard, buyCard, canPlay, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }

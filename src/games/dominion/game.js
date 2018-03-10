@@ -1,11 +1,12 @@
 import { currentPlayer, getState, discard } from '../utils'
-import { playCard, buyCard, canPlay, drawCard, createPlayer, populateCardMap } from './utils'
+import { playCard, buyCard, canPlay, drawCard, createPlayer, populateCardMap, populateMoves } from './utils'
 import types from './cardTypes'
 
 import baseModule from './base/module'
 import coreModule from './core/module'
 
-const Dominion = Game({
+
+const Dominion = {
   setup: (numPlayers) => {
     let G = {
       victory: base_victory,
@@ -23,7 +24,6 @@ const Dominion = Game({
 
     return G;
   },
-
   moves: {
     onClickBoard(G, ctx, key) {
       const state = getState(G);
@@ -32,7 +32,7 @@ const Dominion = Game({
       if (card.count <= 0) {
         return state;
       }
-      
+
       const player = currentPlayer(Gcopy, ctx);
       state = buyCard(state, ctx, player, card);
 
@@ -46,7 +46,7 @@ const Dominion = Game({
       // sanity check
       if (index < 0 || index > hand.length)
         return state;
-      
+
       // can the card be played?
       if (!canPlay(state, ctx, hand[index]))
         return state;
@@ -56,9 +56,8 @@ const Dominion = Game({
       state = playCard(Gcopy, ctx, card);
 
       return state;
-    }
+    },
   },
-
   flow: {
     endGameIf: (G, ctx) => G,
 
@@ -99,10 +98,12 @@ const Dominion = Game({
         name: phases.BUY_PHASE,
         allowedMoves: ['onClickHand', 'onClickBoard']
       },
+      ...baseModule.custom_phases,
+      ...coreModule.custom_phases
     ],
   },
+}
 
+populateMoves(Dominion, [baseModule, coreModule]);
 
-});
-
-export default Dominion;
+export default Game(Dominion);

@@ -10,7 +10,7 @@ import militia from './cards/militia'
 
 let module = {
   cards: [],
-  custom_actions: [],
+  custom_phases: [],
   custom_moves: []
 }
 
