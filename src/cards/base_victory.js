@@ -1,4 +1,4 @@
-import types from './card_types'
+import types from './cardTypes'
 
 const base_victory = [{
   name: "Estate",

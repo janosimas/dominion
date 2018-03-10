@@ -1,5 +1,9 @@
 import { currentPlayer, getState, discard } from '../utils'
-export { playCard, buyCard, canPlay, drawCard, createPlayer } from './utils'
+import { playCard, buyCard, canPlay, drawCard, createPlayer, populateCardMap } from './utils'
+import types from './cardTypes'
+
+import baseModule from './base/module'
+import coreModule from './core/module'
 
 const Dominion = Game({
   setup: (numPlayers) => {
@@ -9,6 +13,7 @@ const Dominion = Game({
       kingdom: base_action,
       play_area: [],
       players: {},
+      cardMap = populateCardMap([baseModule, coreModule]),
       playerView: PlayerView.STRIP_SECRETS
     };
 

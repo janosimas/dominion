@@ -4,7 +4,7 @@ import React from 'react';
 import base_treasure from './cards/base_treasure';
 import base_victory from './cards/base_victory';
 import base_action from './cards/base_action';
-import types from './cards/card_types';
+import types from './cards/cardTypes';
 import phases from './phases';
 
 import './App.css';

@@ -4,6 +4,16 @@ import phases from './phases'
 import copper from './base/cards/copper'
 import estate from './base/cards/estate'
 
+let populateModule = (module, cards) => {
+  module.cards = cards;
+  for (card in cards) {
+    if (card.actions)
+      module.custom_actions.push(...card.custom_actions);
+    if (card.phases)
+      module.custom_moves.push(...card.custom_moves);
+  }
+}
+
 /**
  * Default action for playing cards.
  * 
@@ -140,4 +150,15 @@ let createPlayer = () => {
   return player;
 }
 
-export { playCard, buyCard, canPlay, drawCard, createPlayer }
+let populateCardMap = (modules) => {
+  let cardMap = new Map();
+  for(mod in modules) {
+    for(card in mod.cards) {
+      cardMap.set(card.name, card);
+    }
+  }
+  
+  return cardMap;
+}
+
+export { playCard, buyCard, canPlay, drawCard, createPlayer, populateModule, populateCardMap }

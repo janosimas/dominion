@@ -1,4 +1,4 @@
-import populate_module from '../populate_module'
+import populateModule from '../utils'
 
 import festival from './cards/festival'
 import village from './cards/village'
@@ -14,12 +14,12 @@ let module = {
   custom_moves: []
 }
 
-populate_module(module, [ festival,
-                          village,
-                          laboratory,
-                          smith,
-                          woodcutter,
-                          militia
+populateModule(module, [ festival,
+                         village,
+                         laboratory,
+                         smith,
+                         woodcutter,
+                         militia
                         ]);
 
 export default module;
