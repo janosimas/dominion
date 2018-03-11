@@ -1,8 +1,8 @@
 import types from '../../cardTypes'
 import React from 'react';
-import { Card } from 'boardgame.io/ui';
 
-const card = Card({
+
+const card = {
   name: "Laboratory",
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
   front: <img src='http://wiki.dominionstrategy.com/images/thumb/0/0c/Laboratory.jpg/200px-Laboratory.jpg' alt="Laboratory" />,
@@ -14,6 +14,6 @@ const card = Card({
   cards: 2,
   type: [types.ACTION],
   className: 'card',
-});
+};
 
 export default card;

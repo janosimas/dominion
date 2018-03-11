@@ -5,7 +5,7 @@ import estate from './cards/estate'
 import duchy from './cards/duchy'
 import province from './cards/province'
 
-const module = {
+const mod = {
   cards: [  copper, 
             silver,
             gold,
@@ -15,4 +15,4 @@ const module = {
           ]
 }
 
-export default module;
+export default mod;

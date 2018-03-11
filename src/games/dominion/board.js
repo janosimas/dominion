@@ -1,4 +1,5 @@
 import React from 'react';
+import { Card } from 'boardgame.io/ui';
 
 import { currentPlayer } from '../utils'
 import phases from './phases'
@@ -14,34 +15,27 @@ class DominionBoard extends React.Component {
     this.props.events.endTurn();
   }
 
-  onClickBoard(key, self) {
-    self.props.moves.onClickBoard(key);
+  onClickBoard(key) {
+    this.props.moves.onClickBoard(key);
   }
 
-  onClickHand(id, self) {
-      self.props.moves.onClickHand(id);
+  onClickHand(id) {
+      this.props.moves.onClickHand(id);
   }
 
   renderMainBoard(G, ctx) {
     const cards = G.boardCards;
     let tbody = [];
     for (let index = 0; index < cards.length; index++) {
-      tbody.push(cards[index]);
+      tbody.push(<Card {...cards[index]} key={cards[index].name} onClick={() => this.props.moves.onClickBoard(cards[index].name)} />);
     }
     return tbody;
   }
 
   renderCards(cards, onClickAction, G, ctx, highlight) {
     let tbody = [];
-
-      // tbody.push(
-      //   <span key={cards[index].props.name} className={className} onClick={() => this.props.moves.onClickBoard(cards[index].props.name, this)}>
-      //     {cards[index]}
-      //   </ span>);
-
     for (let index = 0; index < cards.length; index++) {
-      // cards[index].onClick = () => this.props.moves.onClickBoard(cards[index].props.name, this);
-      tbody.push(cards[index]);
+      tbody.push(<Card {...cards[index]} key={index + 100} />);
     }
     return tbody;
   }
@@ -56,7 +50,11 @@ class DominionBoard extends React.Component {
         <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />
       </ span>);
 
-    tbody.push(...this.renderCards(player.hand, this.onClickHand, G, ctx, true));
+    const cards = player.hand;
+    for (let index = 0; index < cards.length; index++) {
+      tbody.push(<Card {...cards[index]} key={index} onClick={() => this.props.moves.onClickHand(index)}/>);
+    }
+
     return tbody;
   }
 

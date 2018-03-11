@@ -1,11 +1,11 @@
 import React from 'react';
-import { Card } from 'boardgame.io/ui';
+
 
 import types from '../../cardTypes'
 import phases from '../../phases'
 import { currentPlayer, getState } from '../../../utils'
 
-const card = Card({
+const card = {
   name: "Militia",
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
   front: <img src='http://wiki.dominionstrategy.com/images/thumb/a/a0/Militia.jpg/200px-Militia.jpg' alt="Militia" />,
@@ -54,7 +54,7 @@ const card = Card({
       }
     }
   ]
-});
+};
 
 export default card;
 

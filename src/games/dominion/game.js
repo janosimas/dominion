@@ -27,7 +27,7 @@ const Dominion = {
   moves: {
     onClickBoard(G, ctx, key) {
       let state = getState(G);
-      const card = state.cardMap[key];
+      const card = state.cardMap.get(key);
       // Ensure we can't have less then 0 cards.
       if (card.count <= 0) {
         return state;
@@ -49,19 +49,19 @@ const Dominion = {
       }
 
       // can the card be played?
-      if (!canPlay(state, ctx, hand[index].props)) {
+      if (!canPlay(state, ctx, hand[index])) {
         return state;
       }
 
       //TODO: reveal or play card?
-      const card = hand.splice(index, 1)[0].props;
+      const card = hand.splice(index, 1)[0];
       state = playCard(state, ctx, card);
 
       return state;
     },
   },
   flow: {
-    endGameIf: (G, ctx) => G,
+    endGameIf: (G, ctx) => {},
 
     // Run at the end of a turn.
     onTurnEnd: (G, ctx) => {
@@ -91,10 +91,10 @@ const Dominion = {
       {
         name: phases.ACTION_PHASE,
         allowedMoves: ['onClickHand'],
-        endPhaseIf: (G, ctx) => {
-          const player = currentPlayer(G, ctx);
-          return player.actions === 0;
-        }
+        // endPhaseIf: (G, ctx) => {
+        //   const player = currentPlayer(G, ctx);
+        //   return player.actions === 0;
+        // }
       },
       {
         name: phases.BUY_PHASE,

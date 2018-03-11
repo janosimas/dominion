@@ -39,11 +39,22 @@ let populateMoves = (game, modules) => {
  * @param {Card} card Card beeing played
  */
 function defaultAction(state, ctx, card) {
-  const player = state.currentPlayer(ctx);
-  state.drawCard(player, card.cards);
-  state.addBuy(player, card.buy);
-  state.addActions(player, card.actions);
-  state.addTreasure(player, card.treasure);
+  const player = currentPlayer(state, ctx);
+  if (card.cards) {
+    drawCard(player, card.cards);
+  }
+  if (card.buy) {
+    player.buy += card.buy;
+  }
+  if (card.actions) {
+    player.actions += card.actions;
+  }
+  if (card.treasure) {
+    player.treasure += card.treasure;
+  }
+  // addBuy(player, card.buy);
+  // addActions(player, card.actions);
+  // addTreasure(player, card.treasure);
 }
 
 /**
@@ -166,8 +177,10 @@ let createPlayer = () => {
 
 let populateCardMap = (modules) => {
   let cardMap = new Map();
-  for(const mod in modules) {
-    for(const card in mod.cards) {
+  for (let index = 0; index < modules.length; index++) {
+    const mod = modules[index];
+    for (let i = 0; i < mod.cards.length; i++) {
+      const card = mod.cards[i];
       cardMap.set(card.name, card);
     }
   }
