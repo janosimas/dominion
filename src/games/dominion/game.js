@@ -54,8 +54,7 @@ const Dominion = {
       }
 
       //TODO: reveal or play card?
-      const card = hand.splice(index, 1)[0];
-      state = playCard(state, ctx, card);
+      state = playCard(state, ctx, index);
 
       return state;
     },
@@ -91,10 +90,15 @@ const Dominion = {
       {
         name: phases.ACTION_PHASE,
         allowedMoves: ['onClickHand'],
-        // endPhaseIf: (G, ctx) => {
-        //   const player = currentPlayer(G, ctx);
-        //   return player.actions === 0;
-        // }
+        endPhaseIf: (G, ctx) => {
+          if(G.custom_phase) {
+            return G.custom_phase;
+          }
+
+          return false;
+          // const player = currentPlayer(G, ctx);
+          // return player.actions === 0;
+        }
       },
       {
         name: phases.BUY_PHASE,

@@ -9,17 +9,26 @@ import estate from './base/cards/estate'
 
 let populateModule = (mod, cards) => {
   mod.cards = cards;
-  for (const card in cards) {
-    if (card.custom_phases)
+  for (let index = 0; index < cards.length; index++) {
+    const card = cards[index];
+    if (card.custom_phases) {
       mod.custom_phases.push(...card.custom_phases);
-    if (card.custom_moves)
+    }
+    if (card.custom_moves) {
       mod.custom_moves.push(...card.custom_moves);
+    }
   }
 }
 
 let populateMoves = (game, modules) => {
-  for(const mod in modules) {
-    for (const custom_move in mod.custom_moves) {
+  for (let index = 0; index < modules.length; index++) {
+    const mod = modules[index];
+    if(!mod.custom_moves) {
+      continue;
+    }
+    
+    for (let i = 0; i < mod.custom_moves.length; i++) {
+      const custom_move = mod.custom_moves[i];
       game.moves[custom_move.name] = custom_move.move;
     }
   }
@@ -60,23 +69,30 @@ function defaultAction(state, ctx, card) {
 /**
  * Activate the effects of the card.
  *
- * @param {string} cardName Card activated by player
  * @param {GameState} G Current game state
  * @param {GameMetadata} ctx Current game metadata
+ * @param {number} index Index of the card activated by player
  */
-let playCard = (state, ctx, card) => {
+let playCard = (state, ctx, index) => {
   let player = currentPlayer(state, ctx);
+  const hand = player.hand;
 
-  if (ctx.phase === phases.ACTION_PHASE)
+  if (ctx.phase === phases.ACTION_PHASE) {
     player.actions--;
+  }
 
-  if(card.onPlay) {
-    card.onPlay(state, ctx);
+  const card = hand.splice(index, 1)[0];
+
+  if (state.custom_onClickHand) {
+    state = state.custom_onClickHand(state, ctx, index);
+  } else if(card.onPlay) {
+    state = card.onPlay(state, ctx);
+    state.play_area.push(card);
   } else {
     defaultAction(state, ctx, card);
+    state.play_area.push(card);
   }
-  state.play_area.push(card);
-
+  
   return state;
 }
 
@@ -105,7 +121,7 @@ let canPlay = (state, ctx, card) => {
   }
 
   if (ctx.phase === phases.BUY_PHASE) {
-    return card.type.includes(types.TREASURE);
+    return card.type.includes(types.TREASURE) && !card.type.includes(types.ACTION);
   }
 
   if (ctx.phase === phases.REACTION_PHASE) {

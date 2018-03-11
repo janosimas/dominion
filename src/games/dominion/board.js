@@ -4,6 +4,7 @@ import { Card } from 'boardgame.io/ui';
 import { currentPlayer } from '../utils'
 import phases from './phases'
 import './board.css';
+import { canPlay } from './utils';
 
 class DominionBoard extends React.Component {
   onClickEndPhase() {
@@ -52,7 +53,13 @@ class DominionBoard extends React.Component {
 
     const cards = player.hand;
     for (let index = 0; index < cards.length; index++) {
-      tbody.push(<Card {...cards[index]} key={index} onClick={() => this.props.moves.onClickHand(index)}/>);
+      //NOTE: does this have any side effects?!
+      const card = Object.assign({}, cards[index]);
+      if (canPlay(G, ctx, card)) {
+        card.className+=' highlight';
+      }
+
+      tbody.push(<Card {...card} key={index} onClick={() => this.props.moves.onClickHand(index)}/>);
     }
 
     return tbody;
