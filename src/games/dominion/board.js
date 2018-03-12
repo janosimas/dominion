@@ -28,12 +28,21 @@ class DominionBoard extends React.Component {
     const cards = G.boardCards;
     let tbody = [];
     for (let index = 0; index < cards.length; index++) {
-      tbody.push(<Card {...cards[index]} key={cards[index].name} onClick={() => this.props.moves.onClickBoard(cards[index].name)} />);
+      if (cards[index].count === 0) {
+        // empty pile of cards on the board
+        tbody.push(<Card {...cards[index]} key={cards[index].name} front={null} canHover={false} />); 
+      } else {
+        // pile of cards on the board
+        tbody.push(<Card {...cards[index]} key={cards[index].name} onClick={() => this.props.moves.onClickBoard(cards[index].name)} />);
+      }
     }
     return tbody;
   }
 
-  renderCards(cards, onClickAction, G, ctx, highlight) {
+  /**
+   * Generic render method for cards
+   */
+  renderCards(cards, G, ctx) {
     let tbody = [];
     for (let index = 0; index < cards.length; index++) {
       tbody.push(<Card {...cards[index]} key={index + 100} />);
@@ -41,6 +50,14 @@ class DominionBoard extends React.Component {
     return tbody;
   }
 
+  /**
+   * Render player board
+   * 
+   * Render:
+   *  - hand
+   *  - deck
+   *  - discard pile
+   */
   renderPlayerBoard(player, G, ctx) {
     let tbody = [];
     const discard = player.discard[player.discard.length - 1];
@@ -68,6 +85,20 @@ class DominionBoard extends React.Component {
     return tbody;
   }
 
+  /**
+   * Render game information and control
+   * 
+   * Information:
+   *  - active player
+   *  - current phase
+   *  - player current treasure
+   *  - player available number of actions
+   *  - player available number of buys
+   * 
+   * Controls:
+   *  - End phase (during action phase)
+   *  - End turn (during buy phase)
+   */
   renderControls(G, ctx) {
     let player = currentPlayer(G, ctx);
 
@@ -79,13 +110,8 @@ class DominionBoard extends React.Component {
     controls.push(<div key='current-buy'>Buy: {player.buy}</div>);
     if (ctx.phase === phases.ACTION_PHASE)
       controls.push(<button key='end-phase' type="button" onClick={() => this.onClickEndPhase()}>end phase</button>);
-    else
+    else if (ctx.phase === phases.BUY_PHASE)
       controls.push(<button key='end-turn' type="button" onClick={() => this.onClickEndTurn()}>end turn</button>);
-
-    // if (this.props.ctx.gameover !== null) {
-    //   controls.push(<div>Winner: {this.props.ctx.gameover}</div>);
-    // }
-
     return controls;
   }
 
