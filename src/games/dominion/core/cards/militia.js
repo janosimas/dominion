@@ -18,9 +18,10 @@ const card = {
   onPlay: (G, ctx) => {
     const state = getState(G);
     state.active_player = currentPlayer(state, ctx);
-    state.custom_phase = 'militia_discard_phase';
+    state.end_turn = true;
+    state.custom_phase = 'Militia discard phase';
     state.custom_onClickHand = (G, ctx, index) => {
-      if (ctx.phase !== 'militia_discard_phase') {
+      if (ctx.phase !== 'Militia discard phase') {
         return G;
       }
 
@@ -34,14 +35,14 @@ const card = {
   custom_moves: [],
   custom_phases: [
     {
-      name: 'militia_discard_phase',
+      name: 'Militia discard phase',
       allowedMoves: ['onClickHand'],
       endTurnIf: (G, ctx) => {
         const player = currentPlayer(G, ctx);
         if (G.active_player === player) {
           return false;
         }
-        return player.hand.size <= 3;
+        return player.hand.length <= 3;
       },
       endPhaseIf: (G, ctx) => {
         const player = currentPlayer(G, ctx);

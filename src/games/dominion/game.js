@@ -1,7 +1,7 @@
 import { Game, PlayerView } from 'boardgame.io/core';
 
 import { currentPlayer, getState, discard } from '../utils'
-import { playCard, buyCard, canPlay, drawCard, createPlayer, populateCardMap, populateMoves } from './utils'
+import { playCard, buyCard, drawCard, createPlayer, populateCardMap, populateMoves } from './utils'
 import phases from './phases'
 
 import baseModule from './base/module'
@@ -48,11 +48,6 @@ const Dominion = {
         return state;
       }
 
-      // can the card be played?
-      if (!canPlay(state, ctx, hand[index])) {
-        return state;
-      }
-
       //TODO: reveal or play card?
       state = playCard(state, ctx, index);
 
@@ -84,6 +79,14 @@ const Dominion = {
       player.treasure = 0;
 
       return state;
+    },
+
+    endTurnIf: (G, ctx) => {
+      if(G.end_turn) {
+        G.end_turn = false;
+        return true;
+      }
+      return false
     },
 
     phases: [

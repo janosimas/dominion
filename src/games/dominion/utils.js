@@ -77,22 +77,30 @@ let playCard = (state, ctx, index) => {
   let player = currentPlayer(state, ctx);
   const hand = player.hand;
 
-  if (ctx.phase === phases.ACTION_PHASE) {
-    player.actions--;
-  }
-
-  const card = hand.splice(index, 1)[0];
-
+  
   if (state.custom_onClickHand) {
     state = state.custom_onClickHand(state, ctx, index);
-  } else if(card.onPlay) {
-    state = card.onPlay(state, ctx);
-    state.play_area.push(card);
   } else {
-    defaultAction(state, ctx, card);
+
+    // can the card be played?
+    if (!canPlay(state, ctx, hand[index])) {
+      return state;
+    }
+
+    if (ctx.phase === phases.ACTION_PHASE) {
+      player.actions--;
+    }
+
+    const card = hand.splice(index, 1)[0];
+
+    if(card.onPlay) { 
+      state = card.onPlay(state, ctx);
+    } else {
+      defaultAction(state, ctx, card);
+    }
+    
     state.play_area.push(card);
   }
-  
   return state;
 }
 
