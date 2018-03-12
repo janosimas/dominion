@@ -121,6 +121,11 @@ class DominionBoard extends React.Component {
     const playerBoard = this.renderPlayerBoard(currentPlayer(this.props.G, this.props.ctx), this.props.G, this.props.ctx);
     const control = this.renderControls(this.props.G, this.props.ctx);
 
+    let winner = null;
+    if (this.props.ctx.gameover) {
+      winner = <div>Winner: {this.props.ctx.gameover}</div>;
+    }
+
     return (
       <div>
         <div className='buy-board'>
@@ -134,6 +139,7 @@ class DominionBoard extends React.Component {
         </div>
         <div className='controls'>
           {control}
+          {winner}
         </div>
       </div>
     );
