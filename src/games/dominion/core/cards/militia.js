@@ -16,7 +16,10 @@ const card = {
   className: 'card',
   type: [types.ACTION, types.ATTACK],
   onPlay: (G, ctx) => {
-    const state = getState(G);
+    let state = getState(G);
+    const player = currentPlayer(state, ctx);
+    player.treasure += this.treasure;
+
     state.active_player = currentPlayer(state, ctx);
     state.end_turn = true;
     state.custom_phase = 'Militia discard phase';
