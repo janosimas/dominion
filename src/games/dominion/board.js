@@ -43,13 +43,16 @@ class DominionBoard extends React.Component {
 
   renderPlayerBoard(player, G, ctx) {
     let tbody = [];
-    let deck = {
-      margin: '15px'
-    }
+    const discard = player.discard[player.discard.length - 1];
     tbody.push(
-      <span key='deck' className='card' style={deck}>
-        <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />
-      </ span>);
+      <Card {...discard} className = 'card' canHover = {false} key='discard' />);
+
+    tbody.push(
+      <Card back={<img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />}
+            isFaceUp={false}
+            canHover={false}
+            className='card'
+            key='deck' />);
 
     const cards = player.hand;
     for (let index = 0; index < cards.length; index++) {
