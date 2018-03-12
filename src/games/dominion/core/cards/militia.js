@@ -16,9 +16,14 @@ const card = {
   className: 'card',
   type: [types.ACTION, types.ATTACK],
   onPlay: (G, ctx) => {
-    let state = getState(G);
+    const state = getState(G);
     const player = currentPlayer(state, ctx);
-    player.treasure += this.treasure;
+    /**
+     * I got a weird behaviour with the code
+     *    player.treasure += this.treasure;
+     * be careful with changes
+     */
+    player.treasure += 2;
 
     state.active_player = currentPlayer(state, ctx);
     state.end_turn = true;
