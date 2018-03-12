@@ -55,7 +55,51 @@ const Dominion = {
     },
   },
   flow: {
-    endGameIf: (G, ctx) => {},
+    endGameIf: (G, ctx) => {
+      return {};
+      // check if there are 3 or more empty piles in the board
+      let emptyCount = 0;
+      for (let index = 0; index < G.boardCards.length; index++) {
+        const card = G.boardCards[index];
+        if(card.count === 0) {
+          emptyCount+=1;
+        }
+      }
+      if(emptyCount < 3) {
+        return {}
+      } else {
+        // game end, check victory condition
+        let victoryMap = new Map();
+        for (const player in G.players) {
+          if (G.players.hasOwnProperty(player)) {
+            let playerVictory = 0;
+            victoryMap.set(player, playerVictory);
+            const props = G.players[player];
+            const cards = [...props.hand, ...props.deck, ...props.discard];
+            for (const card of cards) {
+              if(card.victory) {
+                playerVictory += card.victory;
+              }
+            }
+          }
+        }
+
+        let winner = null;
+        let mostPoints = null;
+        for (const player in victoryMap) {
+          if (victoryMap.hasOwnProperty(player)) {
+            const points = victoryMap[player];
+            if (!winner || points > mostPoints) {
+              winner = player;
+            }
+          }
+        }
+        
+        return winner;
+      }
+
+      return {};
+    },
 
     // Run at the end of a turn.
     onTurnEnd: (G, ctx) => {
