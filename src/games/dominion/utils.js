@@ -61,9 +61,6 @@ function defaultAction(state, ctx, card) {
   if (card.treasure) {
     player.treasure += card.treasure;
   }
-  // addBuy(player, card.buy);
-  // addActions(player, card.actions);
-  // addTreasure(player, card.treasure);
 }
 
 /**
@@ -76,7 +73,6 @@ function defaultAction(state, ctx, card) {
 let playCard = (state, ctx, index) => {
   let player = currentPlayer(state, ctx);
   const hand = player.hand;
-
   
   if (state.custom_onClickHand) {
     state = state.custom_onClickHand(state, ctx, index);
@@ -212,4 +208,4 @@ let populateCardMap = (modules) => {
   return cardMap;
 }
 
-export { playCard, buyCard, canPlay, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
+export { defaultAction, playCard, buyCard, canPlay, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }

@@ -59,6 +59,10 @@ const Dominion = {
 
     // Run at the end of a turn.
     onTurnEnd: (G, ctx) => {
+      if (G.custom_phase) {
+        return G;
+      }
+
       const state = getState(G);
       const player = currentPlayer(state, ctx)
 
@@ -72,6 +76,10 @@ const Dominion = {
     },
 
     onTurnBegin: (G, ctx) => {
+      if (G.custom_phase) {
+        return G;
+      }
+
       const state = getState(G);
       const player = currentPlayer(state, ctx);
       player.actions = 1;
