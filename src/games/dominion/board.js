@@ -4,7 +4,7 @@ import { Card } from 'boardgame.io/ui';
 import { currentPlayer } from '../utils'
 import phases from './phases'
 import './board.css';
-import { canPlay } from './utils';
+import { canPlay, canBuy } from './utils';
 
 class DominionBoard extends React.Component {
   onClickEndPhase() {
@@ -32,8 +32,12 @@ class DominionBoard extends React.Component {
         // empty pile of cards on the board
         tbody.push(<Card {...cards[index]} key={cards[index].name} front={null} canHover={false} />); 
       } else {
+        const card = Object.assign({}, cards[index]);
+        if (canBuy(G, ctx, card)) {
+          card.className+=" highlight";
+        }
         // pile of cards on the board
-        tbody.push(<Card {...cards[index]} key={cards[index].name} onClick={() => this.props.moves.onClickBoard(cards[index].name)} />);
+        tbody.push(<Card {...card} key={card.name} onClick={() => this.props.moves.onClickBoard(card.name)} />);
       }
     }
     return tbody;

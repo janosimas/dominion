@@ -136,6 +136,20 @@ let canPlay = (state, ctx, card) => {
 }
 
 /**
+ * Check if the current player can buy a card 
+ */
+let canBuy = (state, ctx, card) => {
+  const player = currentPlayer(state, ctx);
+  if (ctx.phase === phases.BUY_PHASE
+      && player.buy > 0) {
+    return player.treasure >= card.cost;
+  }
+
+  return false;
+}
+
+
+/**
  * Draw a number of cards from the deck into the player hand
  *
  * if no cards in the deck, shuffle the discard pile
@@ -208,4 +222,4 @@ let populateCardMap = (modules) => {
   return cardMap;
 }
 
-export { defaultAction, playCard, buyCard, canPlay, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
+export { defaultAction, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
