@@ -7,9 +7,6 @@ import './board.css';
 import { canPlay, canBuy } from './utils';
 
 class DominionBoard extends React.Component {
-  onClickEndPhase() {
-    this.props.events.endPhase(phases.BUY_PHASE);
-  }
 
   onClickEndTurn() {
     this.props.events.endPhase(phases.ACTION_PHASE);
@@ -35,7 +32,10 @@ class DominionBoard extends React.Component {
         const card = Object.assign({}, cards[index]);
         if (canBuy(G, ctx, card)) {
           card.className+=" highlight";
+        } else if (G.onHighlightBoard) {
+          card.className += (G.onHighlightBoard(G, ctx, card) || "");
         }
+
         // pile of cards on the board
         tbody.push(<Card {...card} key={card.name} onClick={() => this.props.moves.onClickBoard(card.name)} />);
       }
@@ -81,6 +81,8 @@ class DominionBoard extends React.Component {
       const card = Object.assign({}, cards[index]);
       if (canPlay(G, ctx, card)) {
         card.className+=' highlight';
+      } else if (G.onHighlightHand) {
+        card.className += G.onHighlightHand(G, ctx, card) || "" ;
       }
 
       tbody.push(<Card {...card} key={index} onClick={() => this.props.moves.onClickHand(index)}/>);
@@ -113,9 +115,13 @@ class DominionBoard extends React.Component {
     controls.push(<div key='current-actions'>Actions: {player.actions}</div>);
     controls.push(<div key='current-buy'>Buy: {player.buy}</div>);
     if (ctx.phase === phases.ACTION_PHASE)
-      controls.push(<button key='end-phase' type="button" onClick={() => this.onClickEndPhase()}>end phase</button>);
+      controls.push(<button key='end-phase' type="button" onClick={() => this.props.events.endPhase(phases.BUY_PHASE)}>end phase</button>);
     else if (ctx.phase === phases.BUY_PHASE)
       controls.push(<button key='end-turn' type="button" onClick={() => this.onClickEndTurn()}>end turn</button>);
+    else if (G.allowEndPhase) {
+      const phase = G.allowEndPhase();
+      controls.push(<button key='end-phase' type="button" onClick={() => this.props.events.endPhase(phase)}>end phase</button>);
+    }
     return controls;
   }
 
