@@ -43,12 +43,10 @@
 }
 
 .buy-board {
-  background: #aaffaaaa;
   padding: 0px;
   margin: 0;
   width: 80%;
   height: 50%;
-  border: 1px solid black;
   display:block;
   position: fixed;
   left: 0;
@@ -56,12 +54,10 @@
 }
 
 .play-board {
-  background: #aaaaffaa;
   padding: 0px;
   margin: 0;
   width: 80%;
   height: 25%;
-  border: 1px solid black;
   display:block;
   position: fixed;
   left: 0;
@@ -69,12 +65,10 @@
 }
 
 .player-board {
-  background: rgba(170, 170, 170, 0.50);
   padding: 0px;
   margin: 0;
   width: 80%;
   height: 25%;
-  border: 1px solid black;
   position: fixed;
   top: 75%;
   left: 0;
