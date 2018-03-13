@@ -17,7 +17,6 @@ const card = {
   type: [types.ACTION],
   onPlay: (G, ctx) => {
     const state = getState(G);
-    const player = currentPlayer(state, ctx);
     state.custom_phase = 'Cellar discard phase';
     state.discard_count = 0;
     state.custom_onClickHand = (G, ctx, index) => {
@@ -57,7 +56,7 @@ const card = {
         state.custom_onClickHand = undefined;
         state.onHighlightHand = undefined;
         state.allowEndPhase = undefined;
-        return phases.ACTION_PHASE;
+        return state;
       }
     }
   ]
