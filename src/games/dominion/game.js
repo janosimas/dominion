@@ -12,6 +12,7 @@ const Dominion = {
   setup: (numPlayers) => {
     let G = {
       play_area: [],
+      trash: [],
       players: {},
       cardMap: populateCardMap([baseModule, coreModule]),
       boardCards: [...baseModule.cards, ...coreModule.cards],
