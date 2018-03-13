@@ -7,7 +7,7 @@ const card = {
   front: <img src='http://wiki.dominionstrategy.com/images/thumb/f/fb/Copper.jpg/200px-Copper.jpg' alt="Copper" />,
   isFaceUp: true,
   canHover: true,
-  count: 10,
+  count: 60,
   cost: 0,
   treasure: 1,
   type: [types.TREASURE],
