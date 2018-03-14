@@ -68,8 +68,10 @@ class DominionBoard extends React.Component {
     tbody.push(
       <Card {...discard} className = 'card' canHover = {false} key='discard' />);
 
+    // only show image if there are cards in the deck
+    const image = player.deck.length ? <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' /> : undefined;
     tbody.push(
-      <Card back={<img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />}
+      <Card back={image}
             isFaceUp={false}
             canHover={false}
             className='card'
