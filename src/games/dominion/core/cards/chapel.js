@@ -2,8 +2,7 @@ import React from 'react';
 
 import types from '../../cardTypes'
 import phases from '../../phases'
-import { currentPlayer, getState, discard } from '../../../utils'
-import { drawCard } from '../../utils';
+import { currentPlayer, getState } from '../../../utils'
 
 const card = {
   name: "Chapel",
@@ -49,7 +48,6 @@ const card = {
       },
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
-        const player = currentPlayer(state, ctx);
         state.trash_count = undefined;
         state.custom_phase = undefined;
         state.custom_onClickHand = undefined;
