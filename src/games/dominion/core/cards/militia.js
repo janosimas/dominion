@@ -28,6 +28,13 @@ const card = {
     state.active_player = currentPlayer(state, ctx);
     state.end_turn = true;
     state.custom_phase = 'Militia discard phase';
+    state.onHighlightHand = (G, ctx, card) => {
+      if(card.type.includes(types.REACTION)) {
+        return ' highlight';
+      }
+
+      return ' highlight-yellow';
+    };
     state.custom_onClickHand = (G, ctx, index) => {
       if (ctx.phase !== 'Militia discard phase') {
         return G;
@@ -55,9 +62,10 @@ const card = {
       endPhaseIf: (G, ctx) => {
         const player = currentPlayer(G, ctx);
         if (G.active_player === player) {
-          G.custom_phase = null;
-          G.active_player = null;
-          G.custom_onClickHand = null;
+          G.custom_phase = undefined;
+          G.active_player = undefined;
+          G.custom_onClickHand = undefined;
+          G.onHighlightHand = undefined;
           return phases.ACTION_PHASE;
         } else {
           return false;
