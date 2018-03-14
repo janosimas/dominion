@@ -44,9 +44,6 @@ const card = {
     {
       name: 'Cellar discard phase',
       allowedMoves: ['onClickHand'],
-      endPhaseIf: (G, ctx) => {
-        return G.discard_count === 4;
-      },
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
         const player = currentPlayer(state, ctx);
