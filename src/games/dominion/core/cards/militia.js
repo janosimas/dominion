@@ -18,15 +18,13 @@ const card = {
   onPlay: (G, ctx) => {
     const state = getState(G);
     const player = currentPlayer(state, ctx);
-    /**
-     * I got a weird behaviour with the code
-     *    player.treasure += this.treasure;
-     * be careful with changes
-     */
+    // javascript if getting lost with "this"
+    // be careful with changes
     player.treasure += 2;
-
-    state.active_player = currentPlayer(state, ctx);
+    
     state.end_turn = true;
+    state.attack = true;
+    state.active_player = currentPlayer(state, ctx);
     state.custom_phase = 'Militia discard phase';
     state.onHighlightHand = (G, ctx, card) => {
       if(card.type.includes(types.REACTION)) {
@@ -66,6 +64,7 @@ const card = {
           G.active_player = undefined;
           G.custom_onClickHand = undefined;
           G.onHighlightHand = undefined;
+          G.attack = undefined;
           return phases.ACTION_PHASE;
         } else {
           return false;
