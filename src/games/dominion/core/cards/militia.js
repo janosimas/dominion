@@ -18,11 +18,8 @@ const card = {
   onPlay: (G, ctx) => {
     const state = getState(G);
     const player = currentPlayer(state, ctx);
-    /**
-     * I got a weird behaviour with the code
-     *    player.treasure += this.treasure;
-     * be careful with changes
-     */
+    // javascript if getting lost with "this"
+    // be careful with changes
     player.treasure += 2;
     
     state.end_turn = true;
