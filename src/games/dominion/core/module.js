@@ -8,6 +8,7 @@ import woodcutter from './cards/woodcutter'
 import militia from './cards/militia'
 import cellar from './cards/cellar'
 import chapel from './cards/chapel'
+import moat from './cards/moat'
 
 let mod = {
   cards: [],
@@ -23,7 +24,8 @@ populateModule(mod,
     woodcutter,
     militia,
     cellar,
-    chapel
+    chapel,
+    moat
   ]);
 
 export default mod;
