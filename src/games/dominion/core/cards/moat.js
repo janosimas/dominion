@@ -1,7 +1,6 @@
 import React from 'react';
 
 import types from '../../cardTypes'
-import phases from '../../phases'
 import { currentPlayer, getState } from '../../../utils'
 import { drawCard } from '../../utils'
 
