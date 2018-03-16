@@ -21,6 +21,10 @@ class DominionBoard extends React.Component {
       this.props.moves.onClickHand(id);
   }
 
+  onClickExtra(id) {
+    this.props.moves.onClickExtra(id);
+  }
+
   renderMainBoard(G, ctx) {
     const cards = G.boardCards;
     let tbody = [];
@@ -50,6 +54,19 @@ class DominionBoard extends React.Component {
     let tbody = [];
     for (let index = 0; index < cards.length; index++) {
       tbody.push(<Card {...cards[index]} key={index + 100} />);
+    }
+    return tbody;
+  }
+
+  renderExtra(cards, G, ctx) {
+    if(!cards) {
+      return undefined;
+    }
+
+    let tbody = [];
+    for (let index = 0; index < cards.length; index++) {
+      const card = cards[index];
+      tbody.push(<Card {...card} key={index} onClick={() => this.props.moves.onClickExtra(index)}/>);
     }
     return tbody;
   }
@@ -128,10 +145,13 @@ class DominionBoard extends React.Component {
   }
 
   render() {
-    const mainBoard = this.renderMainBoard(this.props.G, this.props.ctx);
-    const playArea = this.renderCards(this.props.G.play_area, this.props.G, this.props.ctx);
-    const playerBoard = this.renderPlayerBoard(currentPlayer(this.props.G, this.props.ctx), this.props.G, this.props.ctx);
-    const control = this.renderControls(this.props.G, this.props.ctx);
+    const G = this.props.G;
+    const ctx = this.props.ctx;
+    const mainBoard = this.renderMainBoard(G, ctx);
+    const playArea = this.renderCards(G.play_area, G, ctx);
+    const playerBoard = this.renderPlayerBoard(currentPlayer(G, ctx), G, ctx);
+    const control = this.renderControls(G, ctx);
+    const extraArea = this.renderExtra(G.render_extra, G, ctx);
 
     let winner = null;
     if (this.props.ctx.gameover) {
@@ -152,6 +172,9 @@ class DominionBoard extends React.Component {
         <div className='controls'>
           {control}
           {winner}
+        </div>
+        <div className='extra'>
+          {extraArea}
         </div>
       </div>
     );

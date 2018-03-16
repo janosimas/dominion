@@ -9,6 +9,7 @@ import militia from './cards/militia'
 import cellar from './cards/cellar'
 import chapel from './cards/chapel'
 import moat from './cards/moat'
+import harbinger from './cards/harbinger'
 
 let mod = {
   cards: [],
@@ -25,7 +26,8 @@ populateModule(mod,
     militia,
     cellar,
     chapel,
-    moat
+    moat,
+    harbinger
   ]);
 
 export default mod;

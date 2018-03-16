@@ -88,7 +88,7 @@ let playCard = (state, ctx, index) => {
     }
 
     if (state.attack && hand[index].type.includes(types.REACTION)) {
-      const reaction = hand[index].onReaction(G, ctx);
+      const reaction = hand[index].onReaction(state, ctx);
       state = reaction[0];
       const endPhase = reaction[1];
       if(endPhase) {
