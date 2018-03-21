@@ -7,6 +7,7 @@ import smith from './cards/smith'
 import woodcutter from './cards/woodcutter'
 import militia from './cards/militia'
 import cellar from './cards/cellar'
+import workshop from './cards/workshop'
 
 let mod = {
   cards: [],
@@ -20,6 +21,7 @@ populateModule(mod, [ festival,
                          smith,
                          woodcutter,
                          militia,
+                         workshop,
                          cellar
                         ]);
 

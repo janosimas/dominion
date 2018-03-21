@@ -101,8 +101,11 @@ let playCard = (state, ctx, index) => {
 }
 
 let buyCard = (state, ctx, player, card) => {
-  // if the player has treasure to play
-  if (player.treasure >= card.cost) {
+
+  if (state.custom_onClickBoard) {
+    state = state.custom_onClickBoard(state, ctx, player, card);
+  } else if (player.treasure >= card.cost) {
+    // if the player has treasure to play
     player.treasure -= card.cost;
     player.buy--;
     player.discard.push(card);
