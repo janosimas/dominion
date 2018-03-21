@@ -2,8 +2,7 @@ import React from 'react';
 
 import types from '../../cardTypes'
 import phases from '../../phases'
-import { currentPlayer, getState } from '../../../utils'
-import { buyCard } from '../../utils'
+import { getState } from '../../../utils'
 
 const card = {
   name: "Workshop",
@@ -18,17 +17,15 @@ const card = {
   onPlay: (G, ctx) => {
     const state = getState(G);
     state.custom_phase = 'Workshop buy phase';
-    state.custom_onClickBoard = (G, ctx, key) => {
+    state.custom_onClickBoard = (G, ctx, player, card) => {
       if (ctx.phase !== 'Workshop buy phase') {
         return G;
       }
 
       let state = getState(G);
-      const player = currentPlayer(state, ctx);
-
-      const card = state.cardMap.get(key);
       if(card.cost <= 4) {
-        state = buyCard(state, ctx, player, card);
+        player.discard.push(card);
+        card.count--;
         state.end_phase = true;
       }
 
