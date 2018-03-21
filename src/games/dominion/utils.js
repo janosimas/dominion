@@ -87,15 +87,22 @@ let playCard = (state, ctx, index) => {
       player.actions--;
     }
 
-    const card = hand.splice(index, 1)[0];
-
-    if(card.onPlay) { 
-      state = card.onPlay(state, ctx);
+    if (state.attack && hand[index].type.includes(types.REACTION)) {
+      const reaction = hand[index].onReaction(state, ctx);
+      state = reaction[0];
+      const endPhase = reaction[1];
+      if(endPhase) {
+        //TODO: end phase here
+      }
     } else {
-      defaultAction(state, ctx, card);
+      const card = hand.splice(index, 1)[0];
+      if (card.onPlay) {
+        state = card.onPlay(state, ctx);
+      } else {
+        defaultAction(state, ctx, card);
+      }
+      state.play_area.push(card);
     }
-    
-    state.play_area.push(card);
   }
   return state;
 }

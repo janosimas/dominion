@@ -90,7 +90,15 @@
   margin: 2%;
   padding: 2%;
   border: 1px solid black;
-  z-index: -1;
+}
+
+.extra {
+  background: #ffffff;
+  position: fixed;
+  left: 15%;
+  top: 15%;
+  border: 1px solid black;
+  z-index: 10;
 }
 
 @keyframes App-logo-spin {

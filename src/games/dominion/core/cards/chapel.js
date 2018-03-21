@@ -2,13 +2,12 @@ import React from 'react';
 
 import types from '../../cardTypes'
 import phases from '../../phases'
-import { currentPlayer, getState, discard } from '../../../utils'
-import { drawCard } from '../../utils';
+import { currentPlayer, getState } from '../../../utils'
 
 const card = {
-  name: "Cellar",
+  name: "Chapel",
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
-  front: <img src='http://wiki.dominionstrategy.com/images/thumb/1/1c/Cellar.jpg/200px-Cellar.jpg' alt="Cellar" />,
+  front: <img src='http://wiki.dominionstrategy.com/images/thumb/2/29/Chapel.jpg/200px-Chapel.jpg' alt="Chapel" />,
   isFaceUp: true,
   canHover: true,
   cost: 2,
@@ -17,21 +16,21 @@ const card = {
   type: [types.ACTION],
   onPlay: (G, ctx) => {
     const state = getState(G);
-    state.custom_phase = 'Cellar discard phase';
-    state.discard_count = 0;
+    state.custom_phase = 'Chapel trash phase';
+    state.trash_count = 0;
     state.custom_onClickHand = (G, ctx, index) => {
-      if (ctx.phase !== 'Cellar discard phase') {
+      if (ctx.phase !== 'Chapel trash phase') {
         return G;
       }
 
       const state = getState(G);
       const player = currentPlayer(state, ctx);
-      discard(player, index);
-      state.discard_count++;
+      state.trash.push(player.hand.splice(index, 1)[0]);
+      state.trash_count++;
       return state;
     };
     state.onHighlightHand = (G, ctx, card) => {
-      return ' highlight-yellow';
+      return ' highlight-red';
     };
     state.allowEndPhase = () => {
       return phases.ACTION_PHASE;
@@ -42,13 +41,14 @@ const card = {
   custom_moves: [],
   custom_phases: [
     {
-      name: 'Cellar discard phase',
+      name: 'Chapel trash phase',
       allowedMoves: ['onClickHand'],
+      endPhaseIf: (G, ctx) => {
+        return G.trash_count === 4;
+      },
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
-        const player = currentPlayer(state, ctx);
-        drawCard(player, state.discard_count);
-        state.discard_count = undefined;
+        state.trash_count = undefined;
         state.custom_phase = undefined;
         state.custom_onClickHand = undefined;
         state.onHighlightHand = undefined;

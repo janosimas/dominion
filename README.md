@@ -24,14 +24,6 @@ npm start
 
 Now you can go to `localhost:3000` and check it out.
 
-# TODO
-
-- Complex card actions (not +cards, +treasure...)
-- Discover how to allow other players do some action not in their turn (ex.: select a card to discard)
-- End game condition
-- Victory condition
-- Animate cards
-
 # Disclaimer
 
 I don't own and I'm not affiliate in any way with Dominion or Rio Grande Games (publisher);

@@ -7,6 +7,9 @@ import smith from './cards/smith'
 import woodcutter from './cards/woodcutter'
 import militia from './cards/militia'
 import cellar from './cards/cellar'
+import chapel from './cards/chapel'
+import moat from './cards/moat'
+import harbinger from './cards/harbinger'
 import workshop from './cards/workshop'
 
 let mod = {
@@ -15,14 +18,18 @@ let mod = {
   custom_moves: []
 }
 
-populateModule(mod, [ festival,
-                         village,
-                         laboratory,
-                         smith,
-                         woodcutter,
-                         militia,
-                         workshop,
-                         cellar
-                        ]);
+populateModule(mod,
+  [ festival,
+    village,
+    laboratory,
+    smith,
+    woodcutter,
+    militia,
+    cellar,
+    workshop,
+    chapel,
+    moat,
+    harbinger
+  ]);
 
 export default mod;
