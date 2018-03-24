@@ -28,13 +28,16 @@ const card = {
       return phases.ACTION_PHASE;
     };
 
-    state.render_extra = player.discard;
+    state.render_extra = {
+      cards: player.discard,
+      cardsMove: 'onClickExtraHarbinger'
+    }
 
     return state;
   },
   custom_moves: [
     {
-      name: 'onClickExtra',
+      name: 'onClickExtraHarbinger',
       move: (G, ctx, index) => {
         const state = getState(G);
         const player = currentPlayer(state, ctx);
@@ -48,7 +51,7 @@ const card = {
   custom_phases: [
     {
       name: 'Harbinger select phase',
-      allowedMoves: ['onClickExtra'],
+      allowedMoves: ['onClickExtraHarbinger'],
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
         state.custom_phase = undefined;

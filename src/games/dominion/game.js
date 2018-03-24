@@ -1,7 +1,7 @@
 import { Game, PlayerView } from 'boardgame.io/core';
 
 import { currentPlayer, getState, discard } from '../utils'
-import { playCard, buyCard, drawCard, createPlayer, populateCardMap, populateMoves } from './utils'
+import { playCardFromHand, buyCard, drawCard, createPlayer, populateCardMap, populateMoves } from './utils'
 import phases from './phases'
 
 import baseModule from './base/module'
@@ -50,7 +50,7 @@ const Dominion = {
       }
 
       //TODO: reveal or play card?
-      state = playCard(state, ctx, index);
+      state = playCardFromHand(state, ctx, index);
 
       return state;
     },
