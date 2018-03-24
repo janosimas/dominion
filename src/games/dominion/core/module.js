@@ -11,6 +11,7 @@ import chapel from './cards/chapel'
 import moat from './cards/moat'
 import harbinger from './cards/harbinger'
 import vassal from './cards/vassal'
+import workshop from './cards/workshop'
 
 let mod = {
   cards: [],
@@ -26,6 +27,7 @@ populateModule(mod,
     woodcutter,
     militia,
     cellar,
+    workshop,
     chapel,
     moat,
     harbinger,
