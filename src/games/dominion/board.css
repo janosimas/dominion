@@ -96,6 +96,7 @@
   background: #ffffff;
   position: fixed;
   left: 15%;
+  right: 15%;
   top: 15%;
   border: 1px solid black;
   z-index: 10;

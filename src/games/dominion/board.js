@@ -58,17 +58,31 @@ class DominionBoard extends React.Component {
     return tbody;
   }
 
-  renderExtra(cards, G, ctx) {
-    if(!cards) {
+  renderExtra(render_extra, G, ctx) {
+    if (!render_extra) {
       return undefined;
     }
 
+    const cards = render_extra.cards;
     let tbody = [];
     for (let index = 0; index < cards.length; index++) {
       const card = cards[index];
-      tbody.push(<Card {...card} key={index} onClick={() => this.props.moves.onClickExtra(index)}/>);
+      let onClick = undefined;
+      if (render_extra.cardsMove) {
+        onClick = () => this.props.moves[render_extra.cardsMove](index);
+      }
+      tbody.push(<Card {...card} key={index} onClick={onClick}/>);
     }
-    return tbody;
+    if (tbody) {
+      tbody.push(<br key='br1000'/>);
+    }
+
+    const moves = this.props.moves;
+    for (const button of render_extra.buttons) {
+      tbody.push(<button key={button.text} onClick={() => { button.onClick(moves)}}> { button.text }</button>);
+    }
+
+    return <div className='extra'>{tbody}</div>;
   }
 
   /**
@@ -173,9 +187,7 @@ class DominionBoard extends React.Component {
           {control}
           {winner}
         </div>
-        <div className='extra'>
-          {extraArea}
-        </div>
+        {extraArea}
       </div>
     );
   }

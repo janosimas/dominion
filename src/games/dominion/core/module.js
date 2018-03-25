@@ -10,6 +10,7 @@ import cellar from './cards/cellar'
 import chapel from './cards/chapel'
 import moat from './cards/moat'
 import harbinger from './cards/harbinger'
+import vassal from './cards/vassal'
 import workshop from './cards/workshop'
 
 let mod = {
@@ -29,7 +30,8 @@ populateModule(mod,
     workshop,
     chapel,
     moat,
-    harbinger
+    harbinger,
+    vassal
   ]);
 
 export default mod;

@@ -6,6 +6,9 @@ import types from './cardTypes'
 
 import copper from './base/cards/copper'
 import estate from './base/cards/estate'
+import harbinger from './core/cards/harbinger'
+import festival from './core/cards/festival'
+import vassal from './core/cards/vassal'
 
 let populateModule = (mod, cards) => {
   mod.cards = cards;
@@ -70,40 +73,55 @@ function defaultAction(state, ctx, card) {
  * @param {GameMetadata} ctx Current game metadata
  * @param {number} index Index of the card activated by player
  */
-let playCard = (state, ctx, index) => {
+let playCardFromHand = (state, ctx, index) => {
   let player = currentPlayer(state, ctx);
   const hand = player.hand;
   
-  if (state.custom_onClickHand) {
-    state = state.custom_onClickHand(state, ctx, index);
-  } else {
-
-    // can the card be played?
-    if (!canPlay(state, ctx, hand[index])) {
-      return state;
-    }
-
+  if (ctx.phase === phases.ACTION_PHASE
+      || ctx.phase === phases.BUY_PHASE) {
+  
     if (ctx.phase === phases.ACTION_PHASE) {
+      // cards played in the action phase consume actions
+      // other cards that play cards as effects have their own phase
       player.actions--;
     }
 
-    if (state.attack && hand[index].type.includes(types.REACTION)) {
-      const reaction = hand[index].onReaction(state, ctx);
-      state = reaction[0];
-      const endPhase = reaction[1];
-      if(endPhase) {
-        //TODO: end phase here
-      }
-    } else {
-      const card = hand.splice(index, 1)[0];
-      if (card.onPlay) {
-        state = card.onPlay(state, ctx);
-      } else {
-        defaultAction(state, ctx, card);
-      }
-      state.play_area.push(card);
+    // remove card from hand
+    const card = hand.splice(index, 1)[0];
+    if (!canPlay(state, ctx, card)) {
+      return state;
     }
+    state = playCard(state, ctx, card, index);
+
+  } else if (state.custom_onClickHand) {
+    state = state.custom_onClickHand(state, ctx, index);
+  } else {
+    const error = 'Invalid play card from hand!';
+    throw error;
   }
+  return state;
+}
+
+let playCard = (state, ctx, card) => {
+  let player = currentPlayer(state, ctx);
+
+  if (state.attack && card.type.includes(types.REACTION)) {
+    const reaction = card.onReaction(state, ctx);
+    state = reaction[0];
+    const endPhase = reaction[1];
+    player.hand.push(card);
+    if (endPhase) {
+      //TODO: end phase here
+    }
+  } else {
+    if (card.onPlay) {
+      state = card.onPlay(state, ctx);
+    } else {
+      defaultAction(state, ctx, card);
+    }
+    state.play_area.push(card);
+  }
+
   return state;
 }
 
@@ -199,6 +217,7 @@ let startDeck = () => {
   for (let index = 0; index < 3; index++) {
     deck.push(estate);
   }
+
   return Random.Shuffle(deck);
 }
 
@@ -232,4 +251,4 @@ let populateCardMap = (modules) => {
   return cardMap;
 }
 
-export { defaultAction, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
+export { defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }

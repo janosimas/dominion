@@ -57,14 +57,18 @@ const card = {
         }
         return player.hand.length <= 3;
       },
+      onPhaseEnd: (G, ctx) => {
+        const state = getState(G);
+        state.custom_phase = undefined;
+        state.active_player = undefined;
+        state.custom_onClickHand = undefined;
+        state.onHighlightHand = undefined;
+        state.attack = undefined;
+        return state;
+      },
       endPhaseIf: (G, ctx) => {
         const player = currentPlayer(G, ctx);
         if (G.active_player === player) {
-          G.custom_phase = undefined;
-          G.active_player = undefined;
-          G.custom_onClickHand = undefined;
-          G.onHighlightHand = undefined;
-          G.attack = undefined;
           return phases.ACTION_PHASE;
         } else {
           return false;
