@@ -52,12 +52,13 @@ const card = {
       move: (G, ctx, action) => {
         let state = getState(G);
         const player = currentPlayer(state, ctx);
-        const card = state.render_extra.pop();
+        const card = state.render_extra.cards.pop();
         if(action === 'discard') {
           player.discard.push(card);
         } else if (action === 'play') {
           state = playCard(G, ctx, card);
         }
+        state.render_extra = undefined;
         return state;
       }
     }
@@ -71,6 +72,9 @@ const card = {
         state.custom_phase = undefined;
         state.render_extra = undefined;
         return state;
+      },
+      endPhaseIf: (G, ctx) => {
+        return !G.render_extra;
       }
     }
   ]
