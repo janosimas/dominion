@@ -6,9 +6,6 @@ import types from './cardTypes'
 
 import copper from './base/cards/copper'
 import estate from './base/cards/estate'
-import harbinger from './core/cards/harbinger'
-import festival from './core/cards/festival'
-import vassal from './core/cards/vassal'
 
 let populateModule = (mod, cards) => {
   mod.cards = cards;
