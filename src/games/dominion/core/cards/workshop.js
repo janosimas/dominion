@@ -7,7 +7,7 @@ import { getState } from '../../../utils'
 const card = {
   name: "Workshop",
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
-  front: <img src='http://wiki.dominionstrategy.com/images/thumb/a/a0/Workshop.jpg/200px-Workshop.jpg' alt="Workshop" />,
+  front: <img src='http://wiki.dominionstrategy.com/images/thumb/5/50/Workshop.jpg/200px-Workshop.jpg' alt="Workshop" />,
   isFaceUp: true,
   canHover: true,
   cost: 3,
