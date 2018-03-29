@@ -58,7 +58,8 @@ class DominionBoard extends React.Component {
     return tbody;
   }
 
-  renderExtra(render_extra, G, ctx) {
+  renderExtra(G, ctx) {
+    const render_extra = G.render_extra;
     if (!render_extra) {
       return undefined;
     }
@@ -78,8 +79,10 @@ class DominionBoard extends React.Component {
     }
 
     const moves = this.props.moves;
-    for (const button of render_extra.buttons) {
-      tbody.push(<button key={button.text} onClick={() => { button.onClick(moves)}}> { button.text }</button>);
+    if (render_extra.buttons) {
+      for (const button of render_extra.buttons) {
+        tbody.push(<button key={button.text} onClick={() => { button.onClick(moves)}}> { button.text }</button>);
+      }
     }
 
     return <div className='extra'>{tbody}</div>;
@@ -165,7 +168,7 @@ class DominionBoard extends React.Component {
     const playArea = this.renderCards(G.play_area, G, ctx);
     const playerBoard = this.renderPlayerBoard(currentPlayer(G, ctx), G, ctx);
     const control = this.renderControls(G, ctx);
-    const extraArea = this.renderExtra(G.render_extra, G, ctx);
+    const extraArea = this.renderExtra(G, ctx);
 
     let winner = null;
     if (this.props.ctx.gameover) {

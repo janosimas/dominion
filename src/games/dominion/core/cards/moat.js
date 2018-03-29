@@ -25,7 +25,7 @@ const card = {
     const player = currentPlayer(state, ctx);
     // javascript if getting lost with "this"
     // be careful with changes
-    drawCard(player, 2);
+    drawCard(ctx, player, 2);
     return state;
   }
 };

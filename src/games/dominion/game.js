@@ -9,7 +9,7 @@ import coreModule from './core/module'
 
 
 const Dominion = {
-  setup: (numPlayers) => {
+  setup: (ctx) => {
     let G = {
       play_area: [],
       trash: [],
@@ -19,8 +19,8 @@ const Dominion = {
       playerView: PlayerView.STRIP_SECRETS
     };
 
-    for (var i = 0; i < numPlayers; i++) {
-      G.players[i] = { ...createPlayer(), name: 'Player ' + (i + 1) };
+    for (var i = 0; i < ctx.numPlayers; i++) {
+      G.players[i] = { ...createPlayer(ctx), name: 'Player ' + (i + 1) };
     }
 
     return G;
@@ -101,6 +101,7 @@ const Dominion = {
 
     // Run at the end of a turn.
     onTurnEnd: (G, ctx) => {
+      G.end_turn = false;
       if (G.custom_phase) {
         return G;
       }
@@ -113,7 +114,7 @@ const Dominion = {
       for (; player.hand.length > 0;) {
         discard(player, 0);
       }
-      drawCard(player, 5);
+      drawCard(ctx, player, 5);
       return state;
     },
 
@@ -132,11 +133,7 @@ const Dominion = {
     },
 
     endTurnIf: (G, ctx) => {
-      if(G.end_turn) {
-        G.end_turn = false;
-        return true;
-      }
-      return false
+      return !!G.end_turn;
     },
 
     phases: [

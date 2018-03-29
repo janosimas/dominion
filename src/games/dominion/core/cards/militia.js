@@ -57,6 +57,14 @@ const card = {
         }
         return player.hand.length <= 3;
       },
+      onTurnBegin: (G, ctx) => {
+        const state = getState(G);
+        const player = currentPlayer(state, ctx);
+        if (state.active_player === player) {
+          state.end_phase = true;
+        }
+        return state;
+      },
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
         state.custom_phase = undefined;
@@ -64,11 +72,11 @@ const card = {
         state.custom_onClickHand = undefined;
         state.onHighlightHand = undefined;
         state.attack = undefined;
+        state.end_phase = undefined;
         return state;
       },
       endPhaseIf: (G, ctx) => {
-        const player = currentPlayer(G, ctx);
-        if (G.active_player === player) {
+        if (G.end_phase) {
           return phases.ACTION_PHASE;
         } else {
           return false;

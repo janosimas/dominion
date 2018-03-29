@@ -20,7 +20,7 @@ const card = {
   onPlay: (G, ctx) => {
     const state = getState(G);
     const player = currentPlayer(state, ctx);
-    drawCard(player, 1);
+    drawCard(ctx, player, 1);
     player.actions += 1;
 
     state.custom_phase = 'Harbinger select phase';
@@ -62,11 +62,11 @@ const card = {
       },
       endPhaseIf: (G, ctx) => {
         if(G.end_phase ) {
-          return true;
+          return phases.ACTION_PHASE;
         }
         const player = currentPlayer(G, ctx);
         if (player.discard.length === 0) {
-          return true;
+          return phases.ACTION_PHASE;
         }
         return false;
       }
