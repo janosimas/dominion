@@ -15,6 +15,7 @@ import workshop from './cards/workshop'
 import bureaucrat from './cards/bureaucrat'
 import gardens from './cards/gardens'
 import moneylender from './cards/moneylender'
+import poacher from './cards/poacher'
 
 let mod = {
   cards: [],
@@ -38,7 +39,8 @@ populateModule(mod,
     harbinger,
     vassal,
     bureaucrat,
-    moneylender
+    moneylender,
+    poacher
   ]);
 
 export default mod;
