@@ -1,16 +1,11 @@
-import { Random } from 'boardgame.io/core';
-
 import { currentPlayer } from '../utils'
 import phases from './phases'
 import types from './cardTypes'
 
 import copper from './base/cards/copper'
 import estate from './base/cards/estate'
-import harbinger from './core/cards/harbinger'
-import festival from './core/cards/festival'
-import vassal from './core/cards/vassal'
 
-let populateModule = (mod, cards) => {
+const populateModule = (mod, cards) => {
   mod.cards = cards;
   for (let index = 0; index < cards.length; index++) {
     const card = cards[index];
@@ -23,7 +18,7 @@ let populateModule = (mod, cards) => {
   }
 }
 
-let populateMoves = (game, modules) => {
+const populateMoves = (game, modules) => {
   for (let index = 0; index < modules.length; index++) {
     const mod = modules[index];
     if(!mod.custom_moves) {
@@ -50,10 +45,10 @@ let populateMoves = (game, modules) => {
  * @param {GameMetadata} ctx Current game metadata
  * @param {Card} card Card beeing played
  */
-function defaultAction(state, ctx, card) {
+const defaultAction = (state, ctx, card) => {
   const player = currentPlayer(state, ctx);
   if (card.cards) {
-    drawCard(player, card.cards);
+    drawCard(ctx, player, card.cards);
   }
   if (card.buy) {
     player.buy += card.buy;
@@ -73,13 +68,18 @@ function defaultAction(state, ctx, card) {
  * @param {GameMetadata} ctx Current game metadata
  * @param {number} index Index of the card activated by player
  */
-let playCardFromHand = (state, ctx, index) => {
-  let player = currentPlayer(state, ctx);
+const playCardFromHand = (state, ctx, index) => {
+  const player = currentPlayer(state, ctx);
   const hand = player.hand;
   
   if (ctx.phase === phases.ACTION_PHASE
       || ctx.phase === phases.BUY_PHASE) {
   
+    let card = hand[index];
+    if (!canPlay(state, ctx, card)) {
+      return state;
+    }
+
     if (ctx.phase === phases.ACTION_PHASE) {
       // cards played in the action phase consume actions
       // other cards that play cards as effects have their own phase
@@ -87,12 +87,8 @@ let playCardFromHand = (state, ctx, index) => {
     }
 
     // remove card from hand
-    const card = hand.splice(index, 1)[0];
-    if (!canPlay(state, ctx, card)) {
-      return state;
-    }
+    card = hand.splice(index, 1)[0];
     state = playCard(state, ctx, card, index);
-
   } else if (state.custom_onClickHand) {
     state = state.custom_onClickHand(state, ctx, index);
   } else {
@@ -102,8 +98,8 @@ let playCardFromHand = (state, ctx, index) => {
   return state;
 }
 
-let playCard = (state, ctx, card) => {
-  let player = currentPlayer(state, ctx);
+const playCard = (state, ctx, card) => {
+  const player = currentPlayer(state, ctx);
 
   if (state.attack && card.type.includes(types.REACTION)) {
     const reaction = card.onReaction(state, ctx);
@@ -125,8 +121,7 @@ let playCard = (state, ctx, card) => {
   return state;
 }
 
-let buyCard = (state, ctx, player, card) => {
-
+const buyCard = (state, ctx, player, card) => {
   if (state.custom_onClickBoard) {
     state = state.custom_onClickBoard(state, ctx, player, card);
   } else if (player.treasure >= card.cost) {
@@ -147,8 +142,9 @@ let buyCard = (state, ctx, player, card) => {
  * @param {GameState} state Current board of the game
  * @param {GameMetadata} ctx Metadata of the game
  */
-let canPlay = (state, ctx, card) => {
-  if (ctx.phase === phases.ACTION_PHASE) {
+const canPlay = (state, ctx, card) => {
+  const player = currentPlayer(state, ctx);
+  if (ctx.phase === phases.ACTION_PHASE && player.actions > 0) {
     return card.type.includes(types.ACTION);
   }
 
@@ -166,7 +162,7 @@ let canPlay = (state, ctx, card) => {
 /**
  * Check if the current player can buy a card 
  */
-let canBuy = (state, ctx, card) => {
+const canBuy = (state, ctx, card) => {
   const player = currentPlayer(state, ctx);
   if (ctx.phase === phases.BUY_PHASE
       && player.buy > 0) {
@@ -185,13 +181,13 @@ let canBuy = (state, ctx, card) => {
  * @param {Player object} player Player drawing the cards
  * @param {Number} [number=1] Number of cards to draw
  */
-let drawCard = (player, number) => {
+const drawCard = (ctx, player, number) => {
   number = number || 1;
   for (let index = 0; index < number; index++) {
     if (player.deck.length === 0) {
       // if there is no card in the deck
       // shuffle the discard pile into the deck
-      player.deck = Random.Shuffle(player.discard);
+      player.deck = ctx.random.Shuffle(player.discard);
       player.discard = [];
       if (player.deck.length === 0) {
         // if we still have no card
@@ -209,8 +205,8 @@ let drawCard = (player, number) => {
 /**
  * Generate a random start deck
  */
-let startDeck = () => {
-  let deck = [];
+const startDeck = (ctx) => {
+  const deck = [];
   for (let index = 0; index < 7; index++) {
     deck.push(copper);
   }
@@ -218,15 +214,15 @@ let startDeck = () => {
     deck.push(estate);
   }
 
-  return Random.Shuffle(deck);
+  return ctx.random.Shuffle(deck);
 }
 
 /**
  * Create a player with the initial game conditions
  */
-let createPlayer = () => {
+const createPlayer = (ctx) => {
   let player = {
-    deck: startDeck(),
+    deck: startDeck(ctx),
     hand: [],
     discard: [],
     treasure: 0,
@@ -234,12 +230,12 @@ let createPlayer = () => {
     buy: 1
   };
 
-  player = drawCard(player, 5);
+  player = drawCard(ctx, player, 5);
   return player;
 }
 
-let populateCardMap = (modules) => {
-  let cardMap = new Map();
+const populateCardMap = (modules) => {
+  const cardMap = new Map();
   for (let index = 0; index < modules.length; index++) {
     const mod = modules[index];
     for (let i = 0; i < mod.cards.length; i++) {

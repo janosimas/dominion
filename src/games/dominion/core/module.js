@@ -12,6 +12,7 @@ import moat from './cards/moat'
 import harbinger from './cards/harbinger'
 import vassal from './cards/vassal'
 import workshop from './cards/workshop'
+import bureaucrat from './cards/bureaucrat'
 
 let mod = {
   cards: [],
@@ -31,7 +32,8 @@ populateModule(mod,
     chapel,
     moat,
     harbinger,
-    vassal
+    vassal,
+    bureaucrat
   ]);
 
 export default mod;

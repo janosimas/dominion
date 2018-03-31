@@ -2,67 +2,84 @@ import React from 'react';
 
 import types from '../../cardTypes'
 import phases from '../../phases'
-import { currentPlayer, getState, discard } from '../../../utils'
+import { currentPlayer, getState } from '../../../utils'
+
+import silver from '../../base/cards/silver'
 
 const card = {
-  name: "Militia",
+  name: "Bureaucrat",
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
-  front: <img src='http://wiki.dominionstrategy.com/images/thumb/a/a0/Militia.jpg/200px-Militia.jpg' alt="Militia" />,
+  front: <img src='http://wiki.dominionstrategy.com/images/thumb/4/4d/Bureaucrat.jpg/200px-Bureaucrat.jpg' alt="Bureaucrat" />,
   isFaceUp: true,
   canHover: true,
   cost: 4,
   count: 10,
-  treasure: 2,
   className: 'card',
   type: [types.ACTION, types.ATTACK],
   onPlay: (G, ctx) => {
     const state = getState(G);
     const player = currentPlayer(state, ctx);
-    // javascript if getting lost with "this"
-    // be careful with changes
-    player.treasure += 2;
-    
+    player.deck.push(silver);
+
     state.end_turn = true;
     state.attack = true;
     state.active_player = currentPlayer(state, ctx);
-    state.custom_phase = 'Militia discard phase';
+    state.custom_phase = 'Bureaucrat discard phase';
     state.onHighlightHand = (G, ctx, card) => {
-      if(card.type.includes(types.REACTION)) {
-        return ' highlight';
+      if (card.type.includes(types.VICTORY)) {
+        return ' highlight-yellow';
       }
 
-      return ' highlight-yellow';
+      return '';
     };
     state.custom_onClickHand = (G, ctx, index) => {
-      if (ctx.phase !== 'Militia discard phase') {
+      if (ctx.phase !== 'Bureaucrat discard phase') {
         return G;
       }
 
       const state = getState(G);
       const player = currentPlayer(state, ctx);
-      discard(player, index);
-      return state;
+      const card = player.hand[index];
+      if (card.type.includes(types.VICTORY)) {
+        player.deck.push(player.hand.splice(index, 1)[0]);
+        state.hasSelectedVictory = true;
+        return state;
+      } else {
+        return state;
+      }
     };
     return state;
   },
   custom_moves: [],
   custom_phases: [
     {
-      name: 'Militia discard phase',
+      name: 'Bureaucrat discard phase',
       allowedMoves: ['onClickHand'],
       endTurnIf: (G, ctx) => {
         const player = currentPlayer(G, ctx);
         if (G.active_player === player) {
           return false;
         }
-        return player.hand.length <= 3;
+
+        return !!G.hasSelectedVictory;
       },
       onTurnBegin: (G, ctx) => {
         const state = getState(G);
         const player = currentPlayer(state, ctx);
         if (state.active_player === player) {
-          state.end_phase = true;
+          state.custom_end_phase = true;
+          return state;
         }
+
+        state.hasSelectedVictory = false;
+        for (let index = 0; index < player.hand.length; index++) {
+          const card = player.hand[index];
+          if (card.type.includes(types.VICTORY)) {
+            state.hasSelectedVictory = true;
+            break;
+          }
+        }
+
         return state;
       },
       onPhaseEnd: (G, ctx) => {
@@ -72,11 +89,12 @@ const card = {
         state.custom_onClickHand = undefined;
         state.onHighlightHand = undefined;
         state.attack = undefined;
-        state.end_phase = undefined;
+        state.hasSelectedVictory = undefined;
+        state.custom_end_phase = undefined;
         return state;
       },
       endPhaseIf: (G, ctx) => {
-        if (G.end_phase) {
+        if (G.custom_end_phase) {
           return phases.ACTION_PHASE;
         } else {
           return false;

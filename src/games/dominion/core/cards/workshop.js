@@ -38,11 +38,15 @@ const card = {
     {
       name: 'Workshop buy phase',
       allowedMoves: ['onClickBoard'],
+      onPhaseEnd: (G, ctx) => {
+        const state = getState(G);
+        state.custom_phase = undefined;
+        state.custom_onClickBoard = undefined;
+        state.end_phase = undefined;
+        return state;
+      },
       endPhaseIf: (G, ctx) => {
         if (G.end_phase) {
-          G.custom_phase = undefined;
-          G.custom_onClickBoard = undefined;
-          G.end_phase = undefined;
           return phases.ACTION_PHASE;
         } else {
           return false;
