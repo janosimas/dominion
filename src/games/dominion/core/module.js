@@ -15,6 +15,7 @@ import workshop from './cards/workshop'
 import bureaucrat from './cards/bureaucrat'
 import gardens from './cards/gardens'
 import moneylender from './cards/moneylender'
+import remodel from './cards/remodel'
 import poacher from './cards/poacher'
 
 let mod = {
@@ -40,6 +41,7 @@ populateModule(mod,
     vassal,
     bureaucrat,
     moneylender,
+    remodel,
     poacher
   ]);
 
