@@ -21,10 +21,10 @@ const populateModule = (mod, cards) => {
 const populateMoves = (game, modules) => {
   for (let index = 0; index < modules.length; index++) {
     const mod = modules[index];
-    if(!mod.custom_moves) {
+    if (!mod.custom_moves) {
       continue;
     }
-    
+
     for (let i = 0; i < mod.custom_moves.length; i++) {
       const custom_move = mod.custom_moves[i];
       game.moves[custom_move.name] = custom_move.move;
@@ -71,10 +71,10 @@ const defaultAction = (state, ctx, card) => {
 const playCardFromHand = (state, ctx, index) => {
   const player = currentPlayer(state, ctx);
   const hand = player.hand;
-  
+
   if (ctx.phase === phases.ACTION_PHASE
-      || ctx.phase === phases.BUY_PHASE) {
-  
+    || ctx.phase === phases.BUY_PHASE) {
+
     let card = hand[index];
     if (!canPlay(state, ctx, card)) {
       return state;
@@ -165,7 +165,7 @@ const canPlay = (state, ctx, card) => {
 const canBuy = (state, ctx, card) => {
   const player = currentPlayer(state, ctx);
   if (ctx.phase === phases.BUY_PHASE
-      && player.buy > 0) {
+    && player.buy > 0) {
     return player.treasure >= card.cost;
   }
 
@@ -198,7 +198,7 @@ const drawCard = (ctx, player, number) => {
     player.hand.push(player.deck.shift());
   }
   player.hand.sort();
-  
+
   return player;
 }
 
@@ -247,4 +247,8 @@ const populateCardMap = (modules) => {
   return cardMap;
 }
 
-export { defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
+const getCardCost = (G, ctx, card) => {
+  return card.cost;
+}
+
+export { getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
