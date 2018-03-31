@@ -61,12 +61,12 @@ const Dominion = {
       let emptyCount = 0;
       for (let index = 0; index < G.boardCards.length; index++) {
         const card = G.boardCards[index];
-        if(card.count === 0) {
-          emptyCount+=1;
+        if (card.count === 0) {
+          emptyCount += 1;
         }
       }
 
-      if(emptyCount < 2) {
+      if (emptyCount < 2) {
         return undefined;
       } else {
         // game end, check victory condition
@@ -77,7 +77,9 @@ const Dominion = {
             const props = G.players[player];
             const cards = [...props.hand, ...props.deck, ...props.discard];
             for (const playerCard of cards) {
-              if (playerCard.victory) {
+              if (playerCard.custom_victory) {
+                playerVictory += playerCard.custom_victory(G, ctx);
+              } else if (playerCard.victory) {
                 playerVictory += playerCard.victory;
               }
             }
@@ -94,7 +96,7 @@ const Dominion = {
             winner = maybeWinner[0];
           }
         }
-        
+
         return winner;
       }
     },
@@ -141,7 +143,7 @@ const Dominion = {
         name: phases.ACTION_PHASE,
         allowedMoves: ['onClickHand'],
         endPhaseIf: (G, ctx) => {
-          if(G.custom_phase) {
+          if (G.custom_phase) {
             return G.custom_phase;
           }
 
