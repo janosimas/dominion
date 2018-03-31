@@ -13,6 +13,7 @@ import harbinger from './cards/harbinger'
 import vassal from './cards/vassal'
 import workshop from './cards/workshop'
 import bureaucrat from './cards/bureaucrat'
+import gardens from './cards/gardens'
 
 let mod = {
   cards: [],
@@ -21,7 +22,9 @@ let mod = {
 }
 
 populateModule(mod,
-  [ festival,
+  [
+    gardens,
+    festival,
     village,
     laboratory,
     smith,
