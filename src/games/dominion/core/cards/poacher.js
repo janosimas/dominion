@@ -51,7 +51,11 @@ const card = {
       name: 'Poacher discard phase',
       allowedMoves: ['onClickHand'],
       endPhaseIf: (G, ctx) => {
-        return G.countEmptyPiles === 0;
+        if(G.countEmptyPiles === 0) {
+          return phases.ACTION_PHASE;
+        }
+        
+        return false;
       },
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
