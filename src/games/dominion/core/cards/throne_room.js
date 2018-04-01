@@ -27,11 +27,11 @@ const card = {
 
       const state = getState(G);
       const player = currentPlayer(state, ctx);
-      const card = player.hand[index];
-      if(!card.type.includes(types.ACTION)) {
+      if (!player.hand[index].type.includes(types.ACTION)) {
         return state;
       }
 
+      const card = player.hand.splice(index, 1)[0];
       playCard(state, ctx, card);
       playCopy(state, ctx, card);
 
@@ -41,7 +41,7 @@ const card = {
 
     state.onHighlightHand = (G, ctx, card) => {
       if (card.type.includes(types.ACTION)) {
-        return ' highlight-blue';
+        return ' highlight';
       }
       return '';
     };
