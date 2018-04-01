@@ -2,7 +2,8 @@ import React from 'react';
 
 import types from '../../cardTypes'
 import phases from '../../phases'
-import { currentPlayer, getState, getCardCost } from '../../../utils'
+import { currentPlayer, getState } from '../../../utils'
+import { getCardCost } from '../../utils'
 
 const REMODEL_BUY_PHASE = 'Remodel buy phase';
 const REMODEL_TRASH_PHASE = 'Remodel trash phase';
@@ -48,7 +49,7 @@ const card = {
       name: REMODEL_TRASH_PHASE,
       allowedMoves: ['onClickHand'],
       endPhaseIf: (G, ctx) => {
-        if (ctx.phase === REMODEL_BUY_PHASE) {
+        if (G.custom_phase === REMODEL_BUY_PHASE) {
           return REMODEL_BUY_PHASE;
         }
         return false;
@@ -56,8 +57,8 @@ const card = {
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
         state.custom_onClickBoard = (G, ctx, key) => {
-          const card = state.cardMap.get(key);
-          if (getCardCost(G, ctx, card) > state.remodel_temp_treasure) {
+          const card = G.cardMap.get(key);
+          if (getCardCost(G, ctx, card) > G.remodel_temp_treasure) {
             return G;
           }
 
@@ -84,7 +85,7 @@ const card = {
       name: REMODEL_BUY_PHASE,
       allowedMoves: ['onClickBoard'],
       endPhaseIf: (G, ctx) => {
-        if (!state.remodel_temp_treasure) {
+        if (!G.remodel_temp_treasure) {
           return phases.ACTION_PHASE;
         }
         return false;
