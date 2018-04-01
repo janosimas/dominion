@@ -111,6 +111,10 @@ const Dominion = {
       const state = getState(G);
       const player = currentPlayer(state, ctx)
 
+      // remove temp cards
+      state.play_area = state.play_area.filter(card => !!card.temp);
+
+      // move played card to discard area
       player.discard.push(...state.play_area);
       state.play_area = [];
       for (; player.hand.length > 0;) {

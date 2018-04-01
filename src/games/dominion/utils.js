@@ -98,6 +98,13 @@ const playCardFromHand = (state, ctx, index) => {
   return state;
 }
 
+const playCopy = (state, ctx, card) => {
+  const tempCard = Object.assign({}, card);
+  tempCard.temp = true;
+  tempCard.className+=' dim-out';
+  playCard(state, ctx, card);
+}
+
 const playCard = (state, ctx, card) => {
   const player = currentPlayer(state, ctx);
 
@@ -251,4 +258,4 @@ const getCardCost = (G, ctx, card) => {
   return card.cost;
 }
 
-export { getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
+export { playCopy, getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
