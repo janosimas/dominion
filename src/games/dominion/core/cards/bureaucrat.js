@@ -1,10 +1,12 @@
 import React from 'react';
 
 import types from '../../cardTypes'
-import phases from '../../phases'
 import { currentPlayer, getState } from '../../../utils'
 
 import silver from '../../base/cards/silver'
+import { getLastPhase, popPhase, pushPhase } from '../../utils';
+
+const CUSTOM_PHASE = 'Bureaucrat discard phase';
 
 const card = {
   name: "Bureaucrat",
@@ -19,12 +21,12 @@ const card = {
   onPlay: (G, ctx) => {
     const state = getState(G);
     const player = currentPlayer(state, ctx);
-    player.deck.push(silver);
+    player.deck.unshift(silver);
 
     state.end_turn = true;
     state.attack = true;
     state.active_player = currentPlayer(state, ctx);
-    state.custom_phase = 'Bureaucrat discard phase';
+    pushPhase(state, CUSTOM_PHASE);
     state.onHighlightHand = (G, ctx, card) => {
       if (card.type.includes(types.VICTORY)) {
         return ' highlight-yellow';
@@ -33,7 +35,7 @@ const card = {
       return '';
     };
     state.custom_onClickHand = (G, ctx, index) => {
-      if (ctx.phase !== 'Bureaucrat discard phase') {
+      if (ctx.phase !== CUSTOM_PHASE) {
         return G;
       }
 
@@ -53,7 +55,7 @@ const card = {
   custom_moves: [],
   custom_phases: [
     {
-      name: 'Bureaucrat discard phase',
+      name: CUSTOM_PHASE,
       allowedMoves: ['onClickHand'],
       endTurnIf: (G, ctx) => {
         const player = currentPlayer(G, ctx);
@@ -84,18 +86,19 @@ const card = {
       },
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
-        state.custom_phase = undefined;
         state.active_player = undefined;
         state.custom_onClickHand = undefined;
         state.onHighlightHand = undefined;
         state.attack = undefined;
         state.hasSelectedVictory = undefined;
         state.custom_end_phase = undefined;
+        popPhase(state);
+        
         return state;
       },
       endPhaseIf: (G, ctx) => {
         if (G.custom_end_phase) {
-          return phases.ACTION_PHASE;
+          return getLastPhase(G);
         } else {
           return false;
         }

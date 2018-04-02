@@ -3,7 +3,9 @@ import React from 'react';
 import types from '../../cardTypes'
 import phases from '../../phases'
 import { currentPlayer, getState } from '../../../utils'
-import { drawCard } from '../../utils';
+import { drawCard, pushPhase, getLastPhase, popPhase } from '../../utils';
+
+const CUSTOM_PHASE = 'Harbinger select phase';
 
 const card = {
   name: "Harbinger",
@@ -23,7 +25,7 @@ const card = {
     drawCard(ctx, player, 1);
     player.actions += 1;
 
-    state.custom_phase = 'Harbinger select phase';
+    pushPhase(state, CUSTOM_PHASE);
     state.allowEndPhase = () => {
       return phases.ACTION_PHASE;
     };
@@ -50,23 +52,23 @@ const card = {
   ],
   custom_phases: [
     {
-      name: 'Harbinger select phase',
+      name: CUSTOM_PHASE,
       allowedMoves: ['onClickExtraHarbinger'],
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
-        state.custom_phase = undefined;
         state.allowEndPhase = undefined;
         state.render_extra = undefined;
         state.end_phase = undefined;
+        popPhase(state);
         return state;
       },
       endPhaseIf: (G, ctx) => {
         if(G.end_phase ) {
-          return phases.ACTION_PHASE;
+          return getLastPhase(G);
         }
         const player = currentPlayer(G, ctx);
         if (player.discard.length === 0) {
-          return phases.ACTION_PHASE;
+          return getLastPhase(G);
         }
         return false;
       }

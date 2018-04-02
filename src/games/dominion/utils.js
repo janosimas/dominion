@@ -251,4 +251,20 @@ const getCardCost = (G, ctx, card) => {
   return card.cost;
 }
 
-export { getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
+const pushPhase = (state, phase) => {
+  state.phase_pile.push(phase);
+}
+
+const getLastPhase = (G) => {
+  return G.phase_pile[G.phase_pile.length - 2];
+}
+
+const getTopPhase = (G) => {
+  return G.phase_pile[G.phase_pile.length - 1];
+}
+
+const popPhase = (state) => {
+  state.phase_pile.pop();
+}
+
+export { getTopPhase, pushPhase, getLastPhase, popPhase, getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }

@@ -1,8 +1,10 @@
 import React from 'react';
 
 import types from '../../cardTypes'
-import phases from '../../phases'
 import { currentPlayer, getState, discard } from '../../../utils'
+import { pushPhase, getLastPhase, popPhase } from '../../utils';
+
+const CUSTOM_PHASE = 'Militia discard phase';
 
 const card = {
   name: "Militia",
@@ -25,7 +27,7 @@ const card = {
     state.end_turn = true;
     state.attack = true;
     state.active_player = currentPlayer(state, ctx);
-    state.custom_phase = 'Militia discard phase';
+    pushPhase(state, CUSTOM_PHASE);
     state.onHighlightHand = (G, ctx, card) => {
       if(card.type.includes(types.REACTION)) {
         return ' highlight';
@@ -34,7 +36,7 @@ const card = {
       return ' highlight-yellow';
     };
     state.custom_onClickHand = (G, ctx, index) => {
-      if (ctx.phase !== 'Militia discard phase') {
+      if (ctx.phase !== CUSTOM_PHASE) {
         return G;
       }
 
@@ -48,13 +50,14 @@ const card = {
   custom_moves: [],
   custom_phases: [
     {
-      name: 'Militia discard phase',
+      name: CUSTOM_PHASE,
       allowedMoves: ['onClickHand'],
       endTurnIf: (G, ctx) => {
         const player = currentPlayer(G, ctx);
         if (G.active_player === player) {
           return false;
         }
+
         return player.hand.length <= 3;
       },
       onTurnBegin: (G, ctx) => {
@@ -67,17 +70,17 @@ const card = {
       },
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
-        state.custom_phase = undefined;
         state.active_player = undefined;
         state.custom_onClickHand = undefined;
         state.onHighlightHand = undefined;
         state.attack = undefined;
         state.end_phase = undefined;
+        popPhase(state);
         return state;
       },
       endPhaseIf: (G, ctx) => {
         if (G.end_phase) {
-          return phases.ACTION_PHASE;
+          return getLastPhase(G);
         } else {
           return false;
         }

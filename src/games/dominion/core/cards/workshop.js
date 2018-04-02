@@ -1,8 +1,10 @@
 import React from 'react';
 
 import types from '../../cardTypes'
-import phases from '../../phases'
 import { getState } from '../../../utils'
+import { pushPhase, getLastPhase, popPhase, getCardCost } from '../../utils';
+
+const CUSTOM_PHASE = 'Workshop buy phase';
 
 const card = {
   name: "Workshop",
@@ -16,9 +18,17 @@ const card = {
   type: [types.ACTION],
   onPlay: (G, ctx) => {
     const state = getState(G);
-    state.custom_phase = 'Workshop buy phase';
+    pushPhase(state, CUSTOM_PHASE);
+    state.onHighlightBoard = (G, ctx, card) => {
+      if (getCardCost(G, ctx, card) > 4) {
+        return '';
+      }
+
+      return ' highlight';
+    }
+    
     state.custom_onClickBoard = (G, ctx, player, card) => {
-      if (ctx.phase !== 'Workshop buy phase') {
+      if (ctx.phase !== CUSTOM_PHASE) {
         return G;
       }
 
@@ -36,18 +46,19 @@ const card = {
   custom_moves: [],
   custom_phases: [
     {
-      name: 'Workshop buy phase',
+      name: CUSTOM_PHASE,
       allowedMoves: ['onClickBoard'],
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
-        state.custom_phase = undefined;
         state.custom_onClickBoard = undefined;
         state.end_phase = undefined;
+        state.onHighlightBoard = undefined;
+        popPhase(state);
         return state;
       },
       endPhaseIf: (G, ctx) => {
         if (G.end_phase) {
-          return phases.ACTION_PHASE;
+          return getLastPhase(G);
         } else {
           return false;
         }

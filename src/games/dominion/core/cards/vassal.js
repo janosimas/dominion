@@ -2,7 +2,9 @@ import React from 'react';
 
 import types from '../../cardTypes'
 import { currentPlayer, getState } from '../../../utils'
-import { playCard } from '../../utils';
+import { playCard, pushPhase, getLastPhase, popPhase } from '../../utils';
+
+const CUSTOM_PHASE = 'Vassal option phase';
 
 const card = {
   name: "Vassal",
@@ -22,7 +24,7 @@ const card = {
 
     const card = player.deck.pop();
     if (card.type.includes(types.ACTION)) {
-      state.custom_phase = 'Vassal option phase';
+      pushPhase(state, CUSTOM_PHASE);
       state.render_extra = {
         cards: [card],
         buttons: [
@@ -65,16 +67,20 @@ const card = {
   ],
   custom_phases: [
     {
-      name: 'Vassal option phase',
+      name: CUSTOM_PHASE,
       allowedMoves: ['onClickExtraVassal'],
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
-        state.custom_phase = undefined;
         state.render_extra = undefined;
+        popPhase(state);
         return state;
       },
       endPhaseIf: (G, ctx) => {
-        return !G.render_extra;
+        if(!G.render_extra) {
+          return getLastPhase(G);
+        }
+
+        return false;
       }
     }
   ]
