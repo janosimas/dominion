@@ -1,8 +1,10 @@
 import React from 'react';
 
 import types from '../../cardTypes'
-import phases from '../../phases'
 import { currentPlayer, getState } from '../../../utils'
+import { pushPhase, getLastPhase, popPhase } from '../../utils';
+
+const CUSTOM_PHASE = 'Moneylender discard phase';
 
 const card = {
   name: "Moneylender",
@@ -18,7 +20,7 @@ const card = {
     const state = getState(G);
 
     state.hasTrashCopper = false;
-    state.custom_phase = 'Moneylender discard phase';
+    pushPhase(state, CUSTOM_PHASE);
     state.onHighlightHand = (G, ctx, card) => {
       if (card.name === 'Copper') {
         return ' highlight-red';
@@ -27,7 +29,7 @@ const card = {
       return '';
     };
     state.custom_onClickHand = (G, ctx, index) => {
-      if (ctx.phase !== 'Moneylender discard phase') {
+      if (ctx.phase !== CUSTOM_PHASE) {
         return G;
       }
 
@@ -37,13 +39,14 @@ const card = {
       if (card.name === 'Copper') {
         state.trash.push(player.hand.splice(index, 1)[0]);
         player.treasure += 3;
+        state.hasTrashCopper = true;
       }
 
       return state;
     };
 
     state.allowEndPhase = () => {
-      return phases.ACTION_PHASE;
+      return getLastPhase(state);
     };
 
     return state;
@@ -55,15 +58,15 @@ const card = {
       allowedMoves: ['onClickHand'],
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
-        state.custom_phase = undefined;
         state.custom_onClickHand = undefined;
         state.onHighlightHand = undefined;
         state.hasTrashCopper = undefined;
+        popPhase(state);
         return state;
       },
       endPhaseIf: (G, ctx) => {
         if (G.hasTrashCopper) {
-          return phases.ACTION_PHASE;
+          return getLastPhase(G);
         } else {
           return false;
         }

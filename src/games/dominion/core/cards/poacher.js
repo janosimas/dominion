@@ -1,8 +1,10 @@
 import React from 'react';
 
 import types from '../../cardTypes'
-import phases from '../../phases'
 import { currentPlayer, getState } from '../../../utils'
+import { popPhase, getLastPhase, pushPhase, drawCard } from '../../utils';
+
+const CUSTOM_PHASE = 'Poacher discard phase';
 
 const card = {
   name: "Poacher",
@@ -12,10 +14,17 @@ const card = {
   canHover: true,
   cost: 4,
   count: 10,
+  cards: 1,
+  actions: 1,
+  treasure: 1,
   className: 'card',
   type: [types.ACTION],
   onPlay: (G, ctx) => {
     const state = getState(G);
+    const player = currentPlayer(state, ctx);
+    drawCard(ctx, player, 1);
+    player.actions+=1;
+    player.treasure+=1;
 
     let countEmptyPiles = 0;
     for (const card of G.boardCards) {
@@ -25,9 +34,9 @@ const card = {
     }
 
     if (countEmptyPiles > 0) {
-      state.custom_phase = 'Poacher discard phase';
+      pushPhase(state, CUSTOM_PHASE);
       state.custom_onClickHand = (G, ctx, index) => {
-        if (ctx.phase !== 'Poacher discard phase') {
+        if (ctx.phase !== CUSTOM_PHASE) {
           return G;
         }
 
@@ -48,17 +57,20 @@ const card = {
   custom_moves: [],
   custom_phases: [
     {
-      name: 'Poacher discard phase',
+      name: CUSTOM_PHASE,
       allowedMoves: ['onClickHand'],
       endPhaseIf: (G, ctx) => {
-        return G.countEmptyPiles === 0;
+        if(G.countEmptyPiles === 0) {
+          return getLastPhase(G);
+        }
+        return false;
       },
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
         state.countEmptyPiles = undefined;
-        state.custom_phase = undefined;
         state.custom_onClickHand = undefined;
         state.onHighlightHand = undefined;
+        popPhase(state);
         return state;
       }
     }
