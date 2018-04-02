@@ -3,6 +3,9 @@ import React from 'react';
 import types from '../../cardTypes'
 import phases from '../../phases'
 import { currentPlayer, getState } from '../../../utils'
+import { pushPhase, getLastPhase, popPhase } from '../../utils';
+
+const CUSTOM_PHASE = 'Chapel trash phase';
 
 const card = {
   name: "Chapel",
@@ -16,10 +19,10 @@ const card = {
   type: [types.ACTION],
   onPlay: (G, ctx) => {
     const state = getState(G);
-    state.custom_phase = 'Chapel trash phase';
+    pushPhase(state, CUSTOM_PHASE);
     state.trash_count = 0;
     state.custom_onClickHand = (G, ctx, index) => {
-      if (ctx.phase !== 'Chapel trash phase') {
+      if (ctx.phase !== CUSTOM_PHASE) {
         return G;
       }
 
@@ -41,18 +44,22 @@ const card = {
   custom_moves: [],
   custom_phases: [
     {
-      name: 'Chapel trash phase',
+      name: CUSTOM_PHASE,
       allowedMoves: ['onClickHand'],
       endPhaseIf: (G, ctx) => {
-        return G.trash_count === 4;
+        if(G.trash_count === 4) {
+          return getLastPhase(G);
+        }
+
+        return false;
       },
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
         state.trash_count = undefined;
-        state.custom_phase = undefined;
         state.custom_onClickHand = undefined;
         state.onHighlightHand = undefined;
         state.allowEndPhase = undefined;
+        popPhase(state);
         return state;
       }
     }

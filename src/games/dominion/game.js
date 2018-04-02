@@ -1,7 +1,7 @@
 import { Game, PlayerView } from 'boardgame.io/core';
 
 import { currentPlayer, getState, discard } from '../utils'
-import { playCardFromHand, buyCard, drawCard, createPlayer, populateCardMap, populateMoves } from './utils'
+import { getTopPhase, playCardFromHand, buyCard, drawCard, createPlayer, populateCardMap, populateMoves } from './utils'
 import phases from './phases'
 
 import baseModule from './base/module'
@@ -16,6 +16,7 @@ const Dominion = {
       players: {},
       cardMap: populateCardMap([baseModule, coreModule]),
       boardCards: [...baseModule.cards, ...coreModule.cards],
+      phase_pile: [phases.ACTION_PHASE],
       playerView: PlayerView.STRIP_SECRETS
     };
 
@@ -104,7 +105,8 @@ const Dominion = {
     // Run at the end of a turn.
     onTurnEnd: (G, ctx) => {
       G.end_turn = false;
-      if (G.custom_phase) {
+      const topPhase = getTopPhase(G);
+      if (topPhase !== phases.ACTION_PHASE) {
         return G;
       }
 
@@ -125,7 +127,8 @@ const Dominion = {
     },
 
     onTurnBegin: (G, ctx) => {
-      if (G.custom_phase) {
+      const topPhase = getTopPhase(G);
+      if (topPhase !== phases.ACTION_PHASE) {
         return G;
       }
 
@@ -147,18 +150,36 @@ const Dominion = {
         name: phases.ACTION_PHASE,
         allowedMoves: ['onClickHand'],
         endPhaseIf: (G, ctx) => {
-          if (G.custom_phase) {
-            return G.custom_phase;
+          const topPhase = getTopPhase(G);
+          if (topPhase !== phases.ACTION_PHASE) {
+            return topPhase;
           }
 
           return false;
           // const player = currentPlayer(G, ctx);
           // return player.actions === 0;
+        },
+        onPhaseBegin: (G, ctx) => {
+          if(G.phase_pile.length !== 1 
+            || (G.phase_pile[0] !== phases.ACTION_PHASE
+                && G.phase_pile[0] !== phases.BUY_PHASE)) {
+            const err = 'Invalid phase pile';
+            throw err;
+          }
+
+          const state = getState(G);
+          state.phase_pile = [phases.ACTION_PHASE];
+          return state;
         }
       },
       {
         name: phases.BUY_PHASE,
-        allowedMoves: ['onClickHand', 'onClickBoard']
+        allowedMoves: ['onClickHand', 'onClickBoard'],
+        onPhaseBegin: (G, ctx) => {
+          const state = getState(G);
+          state.phase_pile = [phases.BUY_PHASE];
+          return state;
+        }
       },
       ...coreModule.custom_phases
     ],
