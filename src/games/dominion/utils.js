@@ -277,4 +277,4 @@ const popPhase = (state) => {
   state.phase_pile.pop();
 }
 
-export { popDeckCard, getTopPhase, pushPhase, getLastPhase, popPhase, playCopy, getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
+export { popDeckCard, getTopPhase, pushPhase, getLastPhase, popPhase, getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
