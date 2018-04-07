@@ -1,9 +1,8 @@
 import React from 'react';
 
 import types from '../../cardTypes'
-import phases from '../../phases'
 import { currentPlayer, getState } from '../../../utils'
-import { playCard, playCopy } from '../../utils';
+import { playCard, playCopy, getLastPhase, popPhase, pushPhase } from '../../utils';
 
 const CUSTOM_PHASE = 'Throne Room play phase';
 
@@ -19,21 +18,21 @@ const card = {
   type: [types.ACTION],
   onPlay: (G, ctx) => {
     const state = getState(G);
-    state.custom_phase = CUSTOM_PHASE;
+    pushPhase(state, CUSTOM_PHASE);
     state.custom_onClickHand = (G, ctx, index) => {
       if (ctx.phase !== CUSTOM_PHASE) {
         return G;
       }
 
-      const state = getState(G);
+      let state = getState(G);
       const player = currentPlayer(state, ctx);
       if (!player.hand[index].type.includes(types.ACTION)) {
         return state;
       }
 
       const card = player.hand.splice(index, 1)[0];
-      playCard(state, ctx, card);
-      playCopy(state, ctx, card);
+      state = playCard(state, ctx, card);
+      state = playCopy(state, ctx, card);
 
       state.end_custom_phase = true;
       return state;
@@ -47,7 +46,7 @@ const card = {
     };
 
     state.allowEndPhase = () => {
-      return phases.ACTION_PHASE;
+      return getLastPhase(state);
     };
 
     return state;
@@ -59,7 +58,7 @@ const card = {
       allowedMoves: ['onClickHand'],
       endPhaseIf: (G, ctx) => {
         if (G.end_custom_phase) {
-          return phases.ACTION_PHASE;
+          return getLastPhase(G);
         }
 
         return false;
@@ -71,6 +70,7 @@ const card = {
         state.allowEndPhase = undefined;
         state.custom_onClickHand = undefined;
         state.onHighlightHand = undefined;
+        popPhase(state);
         return state;
       }
     }
