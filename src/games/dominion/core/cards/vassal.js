@@ -60,12 +60,12 @@ const card = {
         let state = getState(G);
         const player = currentPlayer(state, ctx);
         const card = state.render_extra.cards.pop();
+        state.render_extra = undefined;
         if(action === 'discard') {
           player.discard.push(card);
         } else if (action === 'play') {
-          state = playCard(G, ctx, card);
+          state = playCard(state, ctx, card);
         }
-        state.render_extra = undefined;
         return state;
       }
     }
