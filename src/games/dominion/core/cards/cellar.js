@@ -1,9 +1,8 @@
 import React from 'react';
 
 import types from '../../cardTypes'
-import phases from '../../phases'
 import { currentPlayer, getState, discard } from '../../../utils'
-import { drawCard, pushPhase, popPhase } from '../../utils';
+import { drawCard, pushPhase, popPhase, getLastPhase } from '../../utils';
 
 const CUSTOM_PHASE = 'Cellar discard phase';
 
@@ -38,7 +37,7 @@ const card = {
       return ' highlight-yellow';
     };
     state.allowEndPhase = () => {
-      return phases.ACTION_PHASE;
+      return getLastPhase(state);
     };
 
     return state;

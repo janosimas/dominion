@@ -172,6 +172,21 @@ const canBuy = (state, ctx, card) => {
   return false;
 }
 
+const popDeckCard = (ctx, player) => {
+  if (player.deck.length === 0) {
+    // if there is no card in the deck
+    // shuffle the discard pile into the deck
+    player.deck = ctx.random.Shuffle(player.discard);
+    player.discard = [];
+    if (player.deck.length === 0) {
+      // if we still have no card
+      // nothing to do
+      return undefined;
+    }
+  }
+
+  return player.deck.shift();
+}
 
 /**
  * Draw a number of cards from the deck into the player hand
@@ -184,18 +199,13 @@ const canBuy = (state, ctx, card) => {
 const drawCard = (ctx, player, number) => {
   number = number || 1;
   for (let index = 0; index < number; index++) {
-    if (player.deck.length === 0) {
-      // if there is no card in the deck
-      // shuffle the discard pile into the deck
-      player.deck = ctx.random.Shuffle(player.discard);
-      player.discard = [];
-      if (player.deck.length === 0) {
-        // if we still have no card
-        // nothing to do
-        return player;
-      }
+    const card = popDeckCard(ctx, player);
+    if(!card) {
+      // empty deck
+      break;
     }
-    player.hand.push(player.deck.shift());
+
+    player.hand.push(card);
   }
   player.hand.sort();
 
@@ -210,9 +220,9 @@ const startDeck = (ctx) => {
   for (let index = 0; index < 7; index++) {
     deck.push(copper);
   }
-  for (let index = 0; index < 3; index++) {
-    deck.push(estate);
-  }
+   for (let index = 0; index < 3; index++) {
+     deck.push(estate);
+   }
 
   return ctx.random.Shuffle(deck);
 }
@@ -267,4 +277,4 @@ const popPhase = (state) => {
   state.phase_pile.pop();
 }
 
-export { getTopPhase, pushPhase, getLastPhase, popPhase, getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
+export { popDeckCard, getTopPhase, pushPhase, getLastPhase, popPhase, getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
