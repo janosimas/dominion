@@ -21,9 +21,11 @@ const card = {
   onPlay: (G, ctx) => {
     const state = getState(G);
     const player = currentPlayer(state, ctx);
-    player.deck.unshift(silver);
+    if(silver.count > 0) {
+      player.deck.push(silver);
+      silver.count--;
+    }
 
-    state.end_turn = true;
     state.attack = true;
     state.active_player = currentPlayer(state, ctx);
     pushPhase(state, CUSTOM_PHASE);
@@ -56,34 +58,67 @@ const card = {
   custom_phases: [
     {
       name: CUSTOM_PHASE,
-      allowedMoves: ['onClickHand'],
+      allowedMoves: ['onClickHand', 'customAction'],
       endTurnIf: (G, ctx) => {
         const player = currentPlayer(G, ctx);
+        if(G.end_turn) {
+          return true;
+        }
+
         if (G.active_player === player) {
           return false;
         }
 
         return !!G.hasSelectedVictory;
       },
-      onTurnBegin: (G, ctx) => {
+      onPhaseBegin: (G, ctx) => {
         const state = getState(G);
         const player = currentPlayer(state, ctx);
         if (state.active_player === player) {
+          state.end_turn = true;
+        }
+        
+        return state;
+      },
+      onTurnBegin: (G, ctx) => {
+        const state = getState(G);
+        const player = currentPlayer(state, ctx);
+        state.end_turn = false;
+        if (state.active_player === player) {
           state.custom_end_phase = true;
-          return state;
         }
 
-        state.hasSelectedVictory = false;
+        let hasSelectableVictory = false;
         for (let index = 0; index < player.hand.length; index++) {
           const card = player.hand[index];
           if (card.type.includes(types.VICTORY)) {
-            state.hasSelectedVictory = true;
+            hasSelectableVictory = true;
             break;
           }
         }
 
+        if (!hasSelectableVictory) {
+          state.customAction = {
+            name: 'End Turn',
+            action: (state, ctx) => {
+              state.end_turn = true;
+              return state;
+            }
+          }
+          
+        }
+
         return state;
       },
+      
+      onTurnEnd: (G, ctx) => {
+        const state = getState(G);
+        state.customAction = undefined;
+        state.end_turn = undefined;
+
+        return state;
+      },
+
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
         state.active_player = undefined;
@@ -92,6 +127,7 @@ const card = {
         state.attack = undefined;
         state.hasSelectedVictory = undefined;
         state.custom_end_phase = undefined;
+        state.end_turn = undefined;
         popPhase(state);
         
         return state;

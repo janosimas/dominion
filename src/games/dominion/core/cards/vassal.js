@@ -2,7 +2,7 @@ import React from 'react';
 
 import types from '../../cardTypes'
 import { currentPlayer, getState } from '../../../utils'
-import { playCard, pushPhase, getLastPhase, popPhase } from '../../utils';
+import { popDeckCard, playCard, pushPhase, getLastPhase, popPhase } from '../../utils';
 
 const CUSTOM_PHASE = 'Vassal option phase';
 
@@ -22,7 +22,12 @@ const card = {
     const player = currentPlayer(state, ctx);
     player.treasure += 2;
 
-    const card = player.deck.pop();
+    const card = popDeckCard(ctx, player);
+    // empty deck
+    if(!card) {
+      return state;
+    }
+
     if (card.type.includes(types.ACTION)) {
       pushPhase(state, CUSTOM_PHASE);
       state.render_extra = {

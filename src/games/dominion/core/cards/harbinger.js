@@ -1,7 +1,6 @@
 import React from 'react';
 
 import types from '../../cardTypes'
-import phases from '../../phases'
 import { currentPlayer, getState } from '../../../utils'
 import { drawCard, pushPhase, getLastPhase, popPhase } from '../../utils';
 
@@ -27,7 +26,7 @@ const card = {
 
     pushPhase(state, CUSTOM_PHASE);
     state.allowEndPhase = () => {
-      return phases.ACTION_PHASE;
+      return getLastPhase(state);
     };
 
     state.render_extra = {

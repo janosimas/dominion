@@ -157,7 +157,12 @@ class DominionBoard extends React.Component {
     else if (G.allowEndPhase) {
       const phase = G.allowEndPhase();
       controls.push(<button key='end-phase' type="button" onClick={() => this.props.events.endPhase(phase)}>end phase</button>);
+    } else if (G.allowEndTurn) {
+      controls.push(<button key='end-turn' type="button" onClick={() => this.props.events.endTurn()}>end turn</button>);
+    } else if (G.customAction) {
+      controls.push(<button key='custom-action' type="button" onClick={() => this.props.moves.customAction()}>{G.customAction.name}</button>);
     }
+    
     return controls;
   }
 
