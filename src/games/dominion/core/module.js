@@ -18,6 +18,7 @@ import moneylender from './cards/moneylender'
 import remodel from './cards/remodel'
 import poacher from './cards/poacher'
 import bandit from './cards/bandit'
+import library from './cards/library'
 
 let mod = {
   cards: [],
@@ -38,6 +39,7 @@ populateModule(mod,
     workshop,
     chapel,
     moat,
+    library,
     harbinger,
     bandit,
     vassal,
