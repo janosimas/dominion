@@ -220,9 +220,10 @@ const startDeck = (ctx) => {
   for (let index = 0; index < 7; index++) {
     deck.push(copper);
   }
-   for (let index = 0; index < 3; index++) {
-     deck.push(estate);
-   }
+  
+  for (let index = 0; index < 3; index++) {
+    deck.push(estate);
+  }
 
   return ctx.random.Shuffle(deck);
 }
