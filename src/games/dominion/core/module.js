@@ -19,6 +19,7 @@ import remodel from './cards/remodel'
 import poacher from './cards/poacher'
 import bandit from './cards/bandit'
 import library from './cards/library'
+import mine from './cards/mine'
 
 let mod = {
   cards: [],
@@ -45,6 +46,7 @@ populateModule(mod,
     vassal,
     bureaucrat,
     moneylender,
+    mine,
     remodel,
     poacher
   ]);
