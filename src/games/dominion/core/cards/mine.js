@@ -81,7 +81,6 @@ const card = {
       allowedMoves: ['onClickBoard'],
       onPhaseBegin: (G, ctx) => {
         const state = getState(G);
-        const player = currentPlayer(state, ctx);
         pushPhase(state, MINE_BUY_PHASE);
         state.onHighlightBoard = (G, ctx, card) => {
           if (card.type.includes(types.TREASURE)
