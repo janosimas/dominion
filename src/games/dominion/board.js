@@ -66,6 +66,11 @@ class DominionBoard extends React.Component {
 
     const cards = render_extra.cards;
     let tbody = [];
+
+    if (render_extra.title) {
+      tbody.push(<h2>{render_extra.title}</h2>);
+    }
+
     for (let index = 0; index < cards.length; index++) {
       const card = cards[index];
       let onClick = undefined;
@@ -74,6 +79,7 @@ class DominionBoard extends React.Component {
       }
       tbody.push(<Card {...card} key={index} onClick={onClick}/>);
     }
+    
     if (tbody) {
       tbody.push(<br key='br1000'/>);
     }
