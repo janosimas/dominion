@@ -66,19 +66,25 @@ class DominionBoard extends React.Component {
 
     const cards = render_extra.cards;
     let tbody = [];
+
+    if (render_extra.title) {
+      tbody.push(<h2>{render_extra.title}</h2>);
+    }
+
+    const moves = this.props.moves;
     for (let index = 0; index < cards.length; index++) {
       const card = cards[index];
       let onClick = undefined;
       if (render_extra.cardsMove) {
-        onClick = () => this.props.moves[render_extra.cardsMove](index);
+        onClick = () => moves[render_extra.cardsMove](index);
       }
       tbody.push(<Card {...card} key={index} onClick={onClick}/>);
     }
+    
     if (tbody) {
       tbody.push(<br key='br1000'/>);
     }
 
-    const moves = this.props.moves;
     if (render_extra.buttons) {
       for (const button of render_extra.buttons) {
         tbody.push(<button key={button.text} onClick={() => { button.onClick(moves)}}> { button.text }</button>);
