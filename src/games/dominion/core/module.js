@@ -21,6 +21,7 @@ import bandit from './cards/bandit'
 import library from './cards/library'
 import mine from './cards/mine'
 import sentry from './cards/sentry'
+import witch from './cards/witch'
 
 let mod = {
   cards: [],
@@ -42,6 +43,7 @@ populateModule(mod,
     chapel,
     moat,
     library,
+    witch,
     sentry,
     harbinger,
     bandit,
