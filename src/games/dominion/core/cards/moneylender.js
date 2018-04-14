@@ -54,7 +54,7 @@ const card = {
   custom_moves: [],
   custom_phases: [
     {
-      name: 'Moneylender discard phase',
+      name: CUSTOM_PHASE,
       allowedMoves: ['onClickHand'],
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);

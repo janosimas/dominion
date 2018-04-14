@@ -17,6 +17,13 @@ import gardens from './cards/gardens'
 import moneylender from './cards/moneylender'
 import remodel from './cards/remodel'
 import poacher from './cards/poacher'
+import bandit from './cards/bandit'
+import library from './cards/library'
+import mine from './cards/mine'
+import sentry from './cards/sentry'
+import witch from './cards/witch'
+import artisian from './cards/artisian'
+import council_room from './cards/council_room'
 import throne_room from './cards/throne_room'
 
 let mod = {
@@ -38,10 +45,17 @@ populateModule(mod,
     workshop,
     chapel,
     moat,
+    library,
+    council_room,
+    artisian,
+    witch,
+    sentry,
     harbinger,
+    bandit,
     vassal,
     bureaucrat,
     moneylender,
+    mine,
     remodel,
     poacher,
     throne_room

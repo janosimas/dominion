@@ -1,7 +1,6 @@
 import React from 'react';
 
 import types from '../../cardTypes'
-import phases from '../../phases'
 import { currentPlayer, getState } from '../../../utils'
 import { pushPhase, getLastPhase, popPhase } from '../../utils';
 
@@ -36,7 +35,7 @@ const card = {
       return ' highlight-red';
     };
     state.allowEndPhase = () => {
-      return phases.ACTION_PHASE;
+      return getLastPhase(state);
     };
 
     return state;
