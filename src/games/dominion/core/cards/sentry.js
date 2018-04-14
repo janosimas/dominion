@@ -29,7 +29,7 @@ const card = {
   },
   custom_moves: [
     {
-      name: 'onClickExtraHarbinger',
+      name: 'onClickSentryTrash',
       move: (G, ctx, index) => {
         const state = getState(G);
         const card = state.render_extra.cards.splice(index, 1)[0];
@@ -96,12 +96,11 @@ const card = {
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
         state.allowEndPhase = undefined;
-        popPhase(state);
         return state;
       },
       endPhaseIf: (G, ctx) => {
         if (G.no_cards
-            || !G.render_extra.cards) {
+            || !G.render_extra.cards.length) {
           return SENTRY_DISCARD_PHASE;
         } else {
           return false;
@@ -126,12 +125,11 @@ const card = {
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
         state.allowEndPhase = undefined;
-        popPhase(state);
         return state;
       },
       endPhaseIf: (G, ctx) => {
         if (G.no_cards
-            || !G.render_extra.cards) {
+            || !G.render_extra.cards.length) {
           return SENTRY_REORDER_PHASE;
         } else {
           return false;
@@ -159,7 +157,7 @@ const card = {
       },
       endPhaseIf: (G, ctx) => {
         if (G.no_cards
-            || !G.render_extra.cards) {
+            || !G.render_extra.cards.length) {
           return getLastPhase(G);
         } else {
           return false;
