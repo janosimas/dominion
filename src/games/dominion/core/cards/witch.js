@@ -2,7 +2,7 @@ import React from 'react';
 
 import types from '../../cardTypes';
 import { currentPlayer, getState } from '../../../utils';
-import { pushPhase, getLastPhase, popPhase, drawCard, popDeckCard } from '../../utils';
+import { drawCard } from '../../utils';
 
 import curse from '../../base/cards/curse';
 
