@@ -7,6 +7,8 @@ import phases from './phases';
 import baseModule from './base/module';
 import coreModule from './core/module';
 
+import province from './base/cards/province';
+
 
 const Dominion = {
   setup: (ctx) => {
@@ -83,7 +85,9 @@ const Dominion = {
         }
       }
 
-      if (emptyCount < 2) {
+      // if less then 3 piles
+      // AND there are still province in the game
+      if (emptyCount < 2 && province.count !== 0) {
         return undefined;
       } else {
         // game end, check victory condition
