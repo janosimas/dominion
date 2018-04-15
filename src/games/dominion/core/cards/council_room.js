@@ -5,7 +5,7 @@ import { currentPlayer, getState } from '../../../utils';
 import { drawCard } from '../../utils';
 
 const card = {
-  name: "Council Room",
+  name: 'Council Room',
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
   front: <img src='http://wiki.dominionstrategy.com/images/thumb/e/e0/Council_Room.jpg/200px-Council_Room.jpg' alt="Council Room" />,
   isFaceUp: true,
