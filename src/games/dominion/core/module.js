@@ -25,6 +25,7 @@ import witch from './cards/witch';
 import artisian from './cards/artisian';
 import council_room from './cards/council_room';
 import throne_room from './cards/throne_room';
+import merchant from './cards/merchant';
 
 const mod = {
   cards: [],
@@ -46,6 +47,7 @@ populateModule(mod,
     chapel,
     moat,
     library,
+    merchant,
     throne_room,
     council_room,
     artisian,

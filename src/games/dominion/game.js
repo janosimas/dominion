@@ -13,6 +13,7 @@ const Dominion = {
     let G = {
       play_area: [],
       trash: [],
+      onPlayHandTrigger: [],
       players: {},
       cardMap: populateCardMap([baseModule, coreModule]),
       boardCards: [...baseModule.cards, ...coreModule.cards],
