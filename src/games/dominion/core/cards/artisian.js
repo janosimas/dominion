@@ -1,14 +1,14 @@
 import React from 'react';
 
-import types from '../../cardTypes'
-import { currentPlayer, getState } from '../../../utils'
+import types from '../../cardTypes';
+import { currentPlayer, getState } from '../../../utils';
 import { pushPhase, getLastPhase, popPhase, getCardCost } from '../../utils';
 
 const ARTISIAN_BUY_PHASE = 'Artisan buy phase';
 const ARTISIAN_DISCARD_PHASE = 'Artisan discard phase';
 
 const card = {
-  name: "Artisan",
+  name: 'Artisan',
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
   front: <img src='http://wiki.dominionstrategy.com/images/thumb/1/1d/Artisan.jpg/200px-Artisan.jpg' alt="Artisan" />,
   isFaceUp: true,
@@ -30,12 +30,11 @@ const card = {
       onPhaseBegin: (G, ctx) => {
         const state = getState(G);
 
-        state.custom_onClickBoard = (G, ctx, player, card) => {
+        state.custom_onClickBoard = (state, ctx, player, card) => {
           if (ctx.phase !== ARTISIAN_BUY_PHASE) {
-            return G;
+            return state;
           }
 
-          let state = getState(G);
           if (card.cost <= 5) {
             player.hand.push(card);
             card.count--;
@@ -51,7 +50,7 @@ const card = {
           }
 
           return ' highlight';
-        }
+        };
 
         return state;
       },
@@ -88,11 +87,11 @@ const card = {
           player.deck.push(player.hand.splice(index, 1)[0]);
           state.end_phase = true;
           return state;
-        }
+        };
 
         state.onHighlightHand = (G, ctx, card) => {
           return ' highlight-yellow';
-        }
+        };
 
         return state;
       },

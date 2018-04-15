@@ -286,4 +286,18 @@ const popPhase = (state) => {
   state.phase_pile.pop();
 };
 
-export { playCopy, popDeckCard, getTopPhase, pushPhase, getLastPhase, popPhase, getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves };
+const playReaction = (state, ctx) => {
+  const player = currentPlayer(state, ctx);
+  let endPhase = false;
+  for(const card of player.hand) {
+    if(card.onReaction) {
+      const [newState, newEndPhase] = card.onReaction(state, ctx);
+      state = newState;
+      endPhase = endPhase || newEndPhase;
+    }
+  }
+
+  return [state, endPhase];
+};
+
+export { playReaction, playCopy, popDeckCard, getTopPhase, pushPhase, getLastPhase, popPhase, getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves };

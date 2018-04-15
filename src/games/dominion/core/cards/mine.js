@@ -91,12 +91,11 @@ const card = {
           return '';
         };
 
-        state.custom_onClickBoard = (G, ctx, player, card) => {
+        state.custom_onClickBoard = (state, ctx, player, card) => {
           if (ctx.phase !== MINE_BUY_PHASE) {
-            return G;
+            return state;
           }
 
-          const state = getState(G);
           if (card.type.includes(types.TREASURE)
               && card.cost <= state.mine_bonus_cost
               && card.count > 0) {

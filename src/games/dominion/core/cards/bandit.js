@@ -4,7 +4,7 @@ import types from '../../cardTypes';
 import { currentPlayer, getState } from '../../../utils';
 
 import gold from '../../base/cards/gold';
-import { getLastPhase, popPhase, pushPhase, popDeckCard } from '../../utils';
+import { getLastPhase, popPhase, pushPhase, popDeckCard, playReaction } from '../../utils';
 
 const CUSTOM_PHASE = 'Bandit trash phase';
 
@@ -26,7 +26,6 @@ const card = {
       gold.count--;
     }
 
-    state.attack = true;
     state.active_player = currentPlayer(state, ctx);
     pushPhase(state, CUSTOM_PHASE);
 
@@ -41,12 +40,12 @@ const card = {
         const trashCard = state.render_extra.cards.splice(index, 1)[0];
         state.trash.push(trashCard);
 
-        if (state.render_extra.topDeck) {
-          const discardCard = state.render_extra.topDeck[0];
+        if (state.render_extra.cards.length > 0) {
+          const discardCard = state.render_extra.cards[0];
           player.discard.push(discardCard);
         }
 
-        state.end_turn = true;
+        state.attack_condition = true;
         return state;
       }
     }
@@ -54,74 +53,96 @@ const card = {
   custom_phases: [
     {
       name: CUSTOM_PHASE,
-      allowedMoves: ['onClickExtraBandit'],
+      allowedMoves: ['onClickExtraBandit', 'customAction'],
       endTurnIf: (G, ctx) => {
-        return !!G.end_turn;
-      },
-      onPhaseBegin: (G, ctx) => {
-        const state = getState(G);
-        const player = currentPlayer(state, ctx);
-        if (state.active_player === player) {
-          state.end_turn = true;
-          return state;
+        const player = currentPlayer(G, ctx);
+        // end turn action
+        if (G.end_turn) {
+          return true;
         }
-        
-        return state;
+
+        // this happens when the attack
+        // has ended and it's the active player again
+        if (G.active_player === player) {
+          return true;
+        }
+
+        // attack condition
+        return !!G.attack_condition;
       },
       onTurnBegin: (G, ctx) => {
-        const state = getState(G);
-        const player = currentPlayer(state, ctx);
-        state.end_turn = false;
+        let state = getState(G);
+        const player = currentPlayer(G, ctx);
         if (state.active_player === player) {
-          state.custom_end_phase = true;
+          // this happens when the attack
+          // has ended and it's the active player again
+          state.end_attack_phase = true;
           return state;
         }
+
+        state.attack_condition = false;
+
+        // activate reaction cards
+        const [newState, endTurn] = playReaction(state, ctx);
+        state = newState;
 
         const topDeck = [];
         const card1 = popDeckCard(ctx, player);
-        if (card1 && card1.type.includes(types.TREASURE)) {
+        if (card1
+            && card1.type.includes(types.TREASURE)
+            && card1.name !== 'Copper') {
           topDeck.push(card1);
         }
         const card2 = popDeckCard(ctx, player);
-        if (card2 && card2.type.includes(types.TREASURE)) {
+        if (card2
+            && card2.type.includes(types.TREASURE)
+            && card2.name !== 'Copper') {
           topDeck.push(card2);
         }
 
-        if (topDeck) {
+        // allow end turn?
+        if (endTurn || topDeck.length === 0) {
+          state.customAction = {
+            name: 'End Turn',
+            action: (state, ctx) => {
+              state.end_turn = true;
+              return state;
+            }
+          };
+        } else if (topDeck.length > 0) {
           state.render_extra = {
             cards: topDeck,
             cardsMove: 'onClickExtraBandit'
           };
-        } else {
-          state.end_turn = true;
         }
 
         return state;
       },
-      
       onTurnEnd: (G, ctx) => {
         const state = getState(G);
+        state.customAction = undefined;
         state.render_extra = undefined;
         state.end_turn = undefined;
+        state.attack_condition = undefined;
 
         return state;
       },
 
-      onPhaseEnd: (G, ctx) => {
-        const state = getState(G);
-        state.active_player = undefined;
-        state.attack = undefined;
-        state.end_turn = undefined;
-        popPhase(state);
-        
-        return state;
-      },
       endPhaseIf: (G, ctx) => {
-        if (G.custom_end_phase) {
+        if (G.end_attack_phase) {
           return getLastPhase(G);
         } else {
           return false;
         }
+      },
+      onPhaseBegin: (G, ctx) => G,
+      onPhaseEnd: (G, ctx) => {
+        const state = getState(G);
+        state.active_player = undefined;
+        state.end_attack_phase = undefined;
+        popPhase(state);
+
+        return state;
       }
     }
   ]
