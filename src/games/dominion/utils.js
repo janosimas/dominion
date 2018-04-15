@@ -1,9 +1,9 @@
-import { currentPlayer } from '../utils'
-import phases from './phases'
-import types from './cardTypes'
+import { currentPlayer } from '../utils';
+import phases from './phases';
+import types from './cardTypes';
 
-import copper from './base/cards/copper'
-import estate from './base/cards/estate'
+import copper from './base/cards/copper';
+import estate from './base/cards/estate';
 
 const populateModule = (mod, cards) => {
   mod.cards = cards;
@@ -16,7 +16,7 @@ const populateModule = (mod, cards) => {
       mod.custom_moves.push(...card.custom_moves);
     }
   }
-}
+};
 
 const populateMoves = (game, modules) => {
   for (let index = 0; index < modules.length; index++) {
@@ -30,7 +30,7 @@ const populateMoves = (game, modules) => {
       game.moves[custom_move.name] = custom_move.move;
     }
   }
-}
+};
 
 /**
  * Default action for playing cards.
@@ -59,7 +59,7 @@ const defaultAction = (state, ctx, card) => {
   if (card.treasure) {
     player.treasure += card.treasure;
   }
-}
+};
 
 /**
  * Activate the effects of the card.
@@ -92,18 +92,17 @@ const playCardFromHand = (state, ctx, index) => {
   } else if (state.custom_onClickHand) {
     state = state.custom_onClickHand(state, ctx, index);
   } else {
-    const error = 'Invalid play card from hand!';
-    throw error;
+    throw new Error('Invalid play card from hand!');
   }
   return state;
-}
+};
 
 const playCopy = (state, ctx, card) => {
   const tempCard = Object.assign({}, card);
   tempCard.temp = true;
-  tempCard.className+=' dim-out';
-  playCard(state, ctx, card);
-}
+  tempCard.className +=' dim-out';
+  return playCard(state, ctx, card);
+};
 
 const playCard = (state, ctx, card) => {
   const player = currentPlayer(state, ctx);
@@ -126,7 +125,7 @@ const playCard = (state, ctx, card) => {
   }
 
   return state;
-}
+};
 
 const buyCard = (state, ctx, player, card) => {
   if (state.custom_onClickBoard) {
@@ -140,7 +139,7 @@ const buyCard = (state, ctx, player, card) => {
   }
 
   return state;
-}
+};
 
 /**
  * Check if a card can be played
@@ -164,7 +163,7 @@ const canPlay = (state, ctx, card) => {
   }
 
   return false;
-}
+};
 
 /**
  * Check if the current player can buy a card 
@@ -177,7 +176,7 @@ const canBuy = (state, ctx, card) => {
   }
 
   return false;
-}
+};
 
 const popDeckCard = (ctx, player) => {
   if (player.deck.length === 0) {
@@ -193,7 +192,7 @@ const popDeckCard = (ctx, player) => {
   }
 
   return player.deck.shift();
-}
+};
 
 /**
  * Draw a number of cards from the deck into the player hand
@@ -217,7 +216,7 @@ const drawCard = (ctx, player, number) => {
   player.hand.sort();
 
   return player;
-}
+};
 
 /**
  * Generate a random start deck
@@ -233,7 +232,7 @@ const startDeck = (ctx) => {
   }
 
   return ctx.random.Shuffle(deck);
-}
+};
 
 /**
  * Create a player with the initial game conditions
@@ -250,7 +249,7 @@ const createPlayer = (ctx) => {
 
   player = drawCard(ctx, player, 5);
   return player;
-}
+};
 
 const populateCardMap = (modules) => {
   const cardMap = new Map();
@@ -263,26 +262,26 @@ const populateCardMap = (modules) => {
   }
 
   return cardMap;
-}
+};
 
 const getCardCost = (G, ctx, card) => {
   return card.cost;
-}
+};
 
 const pushPhase = (state, phase) => {
   state.phase_pile.push(phase);
-}
+};
 
 const getLastPhase = (G) => {
   return G.phase_pile[G.phase_pile.length - 2];
-}
+};
 
 const getTopPhase = (G) => {
   return G.phase_pile[G.phase_pile.length - 1];
-}
+};
 
 const popPhase = (state) => {
   state.phase_pile.pop();
-}
+};
 
-export { playCopy, popDeckCard, getTopPhase, pushPhase, getLastPhase, popPhase, getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves }
+export { playCopy, popDeckCard, getTopPhase, pushPhase, getLastPhase, popPhase, getCardCost, defaultAction, playCardFromHand, playCard, buyCard, canPlay, canBuy, drawCard, createPlayer, populateModule, populateCardMap, populateMoves };

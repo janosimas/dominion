@@ -1,13 +1,13 @@
 import React from 'react';
 
-import types from '../../cardTypes'
-import { currentPlayer, getState, discard } from '../../../utils'
+import types from '../../cardTypes';
+import { currentPlayer, getState, discard } from '../../../utils';
 import { drawCard, pushPhase, popPhase, getLastPhase } from '../../utils';
 
 const CUSTOM_PHASE = 'Cellar discard phase';
 
 const card = {
-  name: "Cellar",
+  name: 'Cellar',
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
   front: <img src='http://wiki.dominionstrategy.com/images/thumb/1/1c/Cellar.jpg/200px-Cellar.jpg' alt="Cellar" />,
   isFaceUp: true,
@@ -21,24 +21,6 @@ const card = {
     const player = currentPlayer(state, ctx);
     player.actions++;
     pushPhase(state, CUSTOM_PHASE);
-    state.discard_count = 0;
-    state.custom_onClickHand = (G, ctx, index) => {
-      if (ctx.phase !== 'Cellar discard phase') {
-        return G;
-      }
-
-      const state = getState(G);
-      const player = currentPlayer(state, ctx);
-      discard(player, index);
-      state.discard_count++;
-      return state;
-    };
-    state.onHighlightHand = (G, ctx, card) => {
-      return ' highlight-yellow';
-    };
-    state.allowEndPhase = () => {
-      return getLastPhase(state);
-    };
 
     return state;
   },
@@ -47,6 +29,29 @@ const card = {
     {
       name: CUSTOM_PHASE,
       allowedMoves: ['onClickHand'],
+      onPhaseBegin: (G, ctx) => {
+        const state = getState(G);
+        state.discard_count = 0;
+        state.custom_onClickHand = (G, ctx, index) => {
+          if (ctx.phase !== 'Cellar discard phase') {
+            return G;
+          }
+
+          const state = getState(G);
+          const player = currentPlayer(state, ctx);
+          discard(player, index);
+          state.discard_count++;
+          return state;
+        };
+        state.onHighlightHand = (G, ctx, card) => {
+          return ' highlight-yellow';
+        };
+        state.allowEndPhase = () => {
+          return getLastPhase(state);
+        };
+        
+        return state;
+      },
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
         const player = currentPlayer(state, ctx);
