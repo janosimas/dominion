@@ -1,15 +1,15 @@
 import React from 'react';
 
-import types from '../../cardTypes'
-import { currentPlayer, getState } from '../../../utils'
+import types from '../../cardTypes';
+import { currentPlayer, getState } from '../../../utils';
 
-import gold from '../../base/cards/gold'
+import gold from '../../base/cards/gold';
 import { getLastPhase, popPhase, pushPhase, popDeckCard } from '../../utils';
 
 const CUSTOM_PHASE = 'Bandit trash phase';
 
 const card = {
-  name: "Bandit",
+  name: 'Bandit',
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
   front: <img src='http://wiki.dominionstrategy.com/images/thumb/4/46/Bandit.jpg/200px-Bandit.jpg' alt="Bandit" />,
   isFaceUp: true,
@@ -77,7 +77,6 @@ const card = {
           return state;
         }
 
-
         const topDeck = [];
         const card1 = popDeckCard(ctx, player);
         if (card1 && card1.type.includes(types.TREASURE)) {
@@ -92,7 +91,7 @@ const card = {
           state.render_extra = {
             cards: topDeck,
             cardsMove: 'onClickExtraBandit'
-          }
+          };
         } else {
           state.end_turn = true;
         }

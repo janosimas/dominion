@@ -105,23 +105,25 @@ const playCopy = (state, ctx, card) => {
 };
 
 const playCard = (state, ctx, card) => {
-  const player = currentPlayer(state, ctx);
-
-  if (state.attack && card.type.includes(types.REACTION)) {
-    const reaction = card.onReaction(state, ctx);
-    state = reaction[0];
-    const endPhase = reaction[1];
-    player.hand.push(card);
-    if (endPhase) {
-      //TODO: end phase here
-    }
+  if (card.onPlay) {
+    state = card.onPlay(state, ctx);
   } else {
-    if (card.onPlay) {
-      state = card.onPlay(state, ctx);
-    } else {
-      defaultAction(state, ctx, card);
+    defaultAction(state, ctx, card);
+  }
+  state.play_area.push(card);
+  
+  const removeIndexes = [];
+  for (let index = 0; index < state.onPlayHandTrigger.length; index++) {
+    const trigger = state.onPlayHandTrigger[index];
+    const [newState, remove] = trigger(state, ctx, card);
+    state = newState;
+    if(remove) {
+      removeIndexes.push(index);
     }
-    state.play_area.push(card);
+  }
+
+  for(const index of removeIndexes) {
+    state.onPlayHandTrigger.splice(index, 1);
   }
 
   return state;
