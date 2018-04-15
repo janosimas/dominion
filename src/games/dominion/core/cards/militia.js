@@ -1,13 +1,13 @@
 import React from 'react';
 
-import types from '../../cardTypes'
-import { currentPlayer, getState, discard } from '../../../utils'
+import types from '../../cardTypes';
+import { currentPlayer, getState, discard } from '../../../utils';
 import { pushPhase, getLastPhase, popPhase } from '../../utils';
 
 const CUSTOM_PHASE = 'Militia discard phase';
 
 const card = {
-  name: "Militia",
+  name: 'Militia',
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
   front: <img src='http://wiki.dominionstrategy.com/images/thumb/a/a0/Militia.jpg/200px-Militia.jpg' alt="Militia" />,
   isFaceUp: true,
