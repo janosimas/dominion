@@ -2,7 +2,7 @@ import React from 'react';
 
 import types from '../../cardTypes';
 import { currentPlayer, getState, discard } from '../../../utils';
-import { pushPhase, getLastPhase, popPhase } from '../../utils';
+import { pushPhase, getLastPhase, popPhase, playReaction } from '../../utils';
 
 const CUSTOM_PHASE = 'Militia discard phase';
 
@@ -20,70 +20,104 @@ const card = {
   onPlay: (G, ctx) => {
     const state = getState(G);
     const player = currentPlayer(state, ctx);
-    // javascript if getting lost with "this"
-    // be careful with changes
     player.treasure += 2;
-    
-    state.end_turn = true;
-    state.attack = true;
-    state.active_player = currentPlayer(state, ctx);
+    state.active_player = player;
     pushPhase(state, CUSTOM_PHASE);
-    state.onHighlightHand = (G, ctx, card) => {
-      if(card.type.includes(types.REACTION)) {
-        return ' highlight';
-      }
-
-      return ' highlight-yellow';
-    };
-    state.custom_onClickHand = (G, ctx, index) => {
-      if (ctx.phase !== CUSTOM_PHASE) {
-        return G;
-      }
-
-      const state = getState(G);
-      const player = currentPlayer(state, ctx);
-      discard(player, index);
-      return state;
-    };
+    
     return state;
   },
   custom_moves: [],
   custom_phases: [
     {
       name: CUSTOM_PHASE,
-      allowedMoves: ['onClickHand'],
+      allowedMoves: ['onClickHand', 'customAction'],
       endTurnIf: (G, ctx) => {
         const player = currentPlayer(G, ctx);
-        if (G.active_player === player) {
-          return false;
+        // end turn action
+        if (G.end_turn) {
+          return true;
         }
 
+        if (G.active_player === player) {
+          return true;
+        }
+
+        // attack condition
         return player.hand.length <= 3;
       },
       onTurnBegin: (G, ctx) => {
-        const state = getState(G);
-        const player = currentPlayer(state, ctx);
+        let state = getState(G);
+        const player = currentPlayer(G, ctx);
         if (state.active_player === player) {
-          state.end_phase = true;
+          // this happens when the attack
+          // has ended and it's the active player again
+          state.end_attack_phase = true;
+          return state;
         }
+
+        state.attack_condition = false;
+
+        // activate reaction cards
+        const [newState, endTurn] = playReaction(state, ctx);
+        state = newState;
+
+        // allow end turn?
+        if (endTurn) {
+          state.customAction = {
+            name: 'End Turn',
+            action: (state, ctx) => {
+              state.end_turn = true;
+              return state;
+            }
+          };
+        }
+
         return state;
       },
-      onPhaseEnd: (G, ctx) => {
+      onTurnEnd: (G, ctx) => {
         const state = getState(G);
-        state.active_player = undefined;
-        state.custom_onClickHand = undefined;
-        state.onHighlightHand = undefined;
-        state.attack = undefined;
-        state.end_phase = undefined;
-        popPhase(state);
+        state.customAction = undefined;
+        state.end_turn = undefined;
+        state.attack_condition = undefined;
+
         return state;
       },
+
       endPhaseIf: (G, ctx) => {
-        if (G.end_phase) {
+        if (G.end_attack_phase) {
           return getLastPhase(G);
         } else {
           return false;
         }
+      },
+      onPhaseBegin: (G, ctx) => {
+        const state = getState(G);
+        state.onHighlightHand = (G, ctx, card) => {
+          return ' highlight-yellow';
+        };
+
+        state.custom_onClickHand = (G, ctx, index) => {
+          if (ctx.phase !== CUSTOM_PHASE) {
+            return G;
+          }
+
+          const state = getState(G);
+          const player = currentPlayer(state, ctx);
+          discard(player, index);
+          return state;
+        };
+        return state;
+      },
+
+      onPhaseEnd: (G, ctx) => {
+        const state = getState(G);
+        state.active_player = undefined;
+        state.end_attack_phase = undefined;
+        state.onHighlightHand = undefined;
+        state.custom_onClickHand = undefined;
+        popPhase(state);
+
+        return state;
       }
     }
   ]

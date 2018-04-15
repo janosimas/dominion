@@ -40,10 +40,8 @@ const card = {
           return true;
         }
 
-        // this happens when the attack
-        // has ended and it's the active player again
         if (G.active_player === player) {
-          return false;
+          return true;
         }
 
         // attack condition
@@ -88,7 +86,7 @@ const card = {
       },
 
       endPhaseIf: (G, ctx) => {
-        if (G.custom_end_phase) {
+        if (G.end_attack_phase) {
           return getLastPhase(G);
         } else {
           return false;
@@ -122,7 +120,7 @@ const card = {
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
         state.active_player = undefined;
-        state.custom_end_phase = undefined;
+        state.end_attack_phase = undefined;
         state.onHighlightBoard = undefined;
         state.custom_onClickBoard = undefined;
         popPhase(state);
