@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card } from 'boardgame.io/ui';
 
-import { currentPlayer } from '../utils'
-import phases from './phases'
+import { currentPlayer } from '../utils';
+import phases from './phases';
 import './board.css';
 import { canPlay, canBuy } from './utils';
 
@@ -18,7 +18,7 @@ class DominionBoard extends React.Component {
   }
 
   onClickHand(id) {
-      this.props.moves.onClickHand(id);
+    this.props.moves.onClickHand(id);
   }
 
   onClickExtra(id) {
@@ -35,9 +35,9 @@ class DominionBoard extends React.Component {
       } else {
         const card = Object.assign({}, cards[index]);
         if (canBuy(G, ctx, card)) {
-          card.className+=" highlight";
+          card.className+=' highlight';
         } else if (G.onHighlightBoard) {
-          card.className += (G.onHighlightBoard(G, ctx, card) || "");
+          card.className += (G.onHighlightBoard(G, ctx, card) || '');
         }
 
         // pile of cards on the board
@@ -112,10 +112,10 @@ class DominionBoard extends React.Component {
     const image = player.deck.length ? <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' /> : undefined;
     tbody.push(
       <Card back={image}
-            isFaceUp={false}
-            canHover={false}
-            className='card'
-            key='deck' />);
+        isFaceUp={false}
+        canHover={false}
+        className='card'
+        key='deck' />);
 
     const cards = player.hand;
     for (let index = 0; index < cards.length; index++) {
@@ -124,7 +124,7 @@ class DominionBoard extends React.Component {
       if (canPlay(G, ctx, card)) {
         card.className+=' highlight';
       } else if (G.onHighlightHand) {
-        card.className += G.onHighlightHand(G, ctx, card) || "" ;
+        card.className += G.onHighlightHand(G, ctx, card) || '' ;
       }
 
       tbody.push(<Card {...card} key={index} onClick={() => this.props.moves.onClickHand(index)}/>);

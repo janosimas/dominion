@@ -1,13 +1,13 @@
 import React from 'react';
 
-import types from '../../cardTypes'
-import { currentPlayer, getState } from '../../../utils'
+import types from '../../cardTypes';
+import { currentPlayer, getState } from '../../../utils';
 import { pushPhase, getLastPhase, popPhase } from '../../utils';
 
 const CUSTOM_PHASE = 'Chapel trash phase';
 
 const card = {
-  name: "Chapel",
+  name: 'Chapel',
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
   front: <img src='http://wiki.dominionstrategy.com/images/thumb/2/29/Chapel.jpg/200px-Chapel.jpg' alt="Chapel" />,
   isFaceUp: true,
@@ -19,24 +19,7 @@ const card = {
   onPlay: (G, ctx) => {
     const state = getState(G);
     pushPhase(state, CUSTOM_PHASE);
-    state.trash_count = 0;
-    state.custom_onClickHand = (G, ctx, index) => {
-      if (ctx.phase !== CUSTOM_PHASE) {
-        return G;
-      }
-
-      const state = getState(G);
-      const player = currentPlayer(state, ctx);
-      state.trash.push(player.hand.splice(index, 1)[0]);
-      state.trash_count++;
-      return state;
-    };
-    state.onHighlightHand = (G, ctx, card) => {
-      return ' highlight-red';
-    };
-    state.allowEndPhase = () => {
-      return getLastPhase(state);
-    };
+    
 
     return state;
   },
@@ -45,6 +28,29 @@ const card = {
     {
       name: CUSTOM_PHASE,
       allowedMoves: ['onClickHand'],
+      onPhaseBegin: (G, ctx) => {
+        const state = getState(G);
+        state.trash_count = 0;
+        state.custom_onClickHand = (G, ctx, index) => {
+          if (ctx.phase !== CUSTOM_PHASE) {
+            return G;
+          }
+
+          const state = getState(G);
+          const player = currentPlayer(state, ctx);
+          state.trash.push(player.hand.splice(index, 1)[0]);
+          state.trash_count++;
+          return state;
+        };
+        state.onHighlightHand = (G, ctx, card) => {
+          return ' highlight-red';
+        };
+        state.allowEndPhase = () => {
+          return getLastPhase(state);
+        };
+
+        return state;
+      },
       endPhaseIf: (G, ctx) => {
         if(G.trash_count === 4) {
           return getLastPhase(G);

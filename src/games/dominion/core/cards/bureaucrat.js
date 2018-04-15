@@ -1,15 +1,15 @@
 import React from 'react';
 
-import types from '../../cardTypes'
-import { currentPlayer, getState } from '../../../utils'
+import types from '../../cardTypes';
+import { currentPlayer, getState } from '../../../utils';
 
-import silver from '../../base/cards/silver'
+import silver from '../../base/cards/silver';
 import { getLastPhase, popPhase, pushPhase } from '../../utils';
 
 const CUSTOM_PHASE = 'Bureaucrat discard phase';
 
 const card = {
-  name: "Bureaucrat",
+  name: 'Bureaucrat',
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
   front: <img src='http://wiki.dominionstrategy.com/images/thumb/4/4d/Bureaucrat.jpg/200px-Bureaucrat.jpg' alt="Bureaucrat" />,
   isFaceUp: true,
@@ -22,7 +22,7 @@ const card = {
     const state = getState(G);
     const player = currentPlayer(state, ctx);
     if(silver.count > 0) {
-      player.deck.push(silver);
+      player.deck.unshift(silver);
       silver.count--;
     }
 
@@ -104,7 +104,7 @@ const card = {
               state.end_turn = true;
               return state;
             }
-          }
+          };
           
         }
 

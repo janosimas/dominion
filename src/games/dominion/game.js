@@ -1,11 +1,11 @@
 import { Game, PlayerView } from 'boardgame.io/core';
 
-import { currentPlayer, getState, discard } from '../utils'
-import { getTopPhase, playCardFromHand, buyCard, drawCard, createPlayer, populateCardMap, populateMoves } from './utils'
-import phases from './phases'
+import { currentPlayer, getState, discard } from '../utils';
+import { getTopPhase, playCardFromHand, buyCard, drawCard, createPlayer, populateCardMap, populateMoves } from './utils';
+import phases from './phases';
 
-import baseModule from './base/module'
-import coreModule from './core/module'
+import baseModule from './base/module';
+import coreModule from './core/module';
 
 
 const Dominion = {
@@ -119,7 +119,7 @@ const Dominion = {
       }
 
       const state = getState(G);
-      const player = currentPlayer(state, ctx)
+      const player = currentPlayer(state, ctx);
 
       // remove temp cards
       state.play_area = state.play_area.filter(card => !card.temp);
@@ -171,8 +171,7 @@ const Dominion = {
           if(G.phase_pile.length !== 1 
             || (G.phase_pile[0] !== phases.ACTION_PHASE
                 && G.phase_pile[0] !== phases.BUY_PHASE)) {
-            const err = 'Invalid phase pile';
-            throw err;
+            throw new Error('Invalid phase pile');
           }
 
           const state = getState(G);
@@ -192,7 +191,7 @@ const Dominion = {
       ...coreModule.custom_phases
     ],
   },
-}
+};
 
 populateMoves(Dominion, [baseModule, coreModule]);
 

@@ -1,13 +1,13 @@
 import React from 'react';
 
-import types from '../../cardTypes'
-import { getState } from '../../../utils'
+import types from '../../cardTypes';
+import { getState } from '../../../utils';
 import { pushPhase, getLastPhase, popPhase, getCardCost } from '../../utils';
 
 const CUSTOM_PHASE = 'Workshop buy phase';
 
 const card = {
-  name: "Workshop",
+  name: 'Workshop',
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
   front: <img src='http://wiki.dominionstrategy.com/images/thumb/5/50/Workshop.jpg/200px-Workshop.jpg' alt="Workshop" />,
   isFaceUp: true,
@@ -25,7 +25,7 @@ const card = {
       }
 
       return ' highlight';
-    }
+    };
     
     state.custom_onClickBoard = (G, ctx, player, card) => {
       if (ctx.phase !== CUSTOM_PHASE) {

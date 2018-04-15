@@ -1,13 +1,13 @@
 import React from 'react';
 
-import types from '../../cardTypes'
-import { currentPlayer, getState } from '../../../utils'
+import types from '../../cardTypes';
+import { currentPlayer, getState } from '../../../utils';
 import { drawCard, pushPhase, getLastPhase, popPhase } from '../../utils';
 
 const CUSTOM_PHASE = 'Harbinger select phase';
 
 const card = {
-  name: "Harbinger",
+  name: 'Harbinger',
   back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
   front: <img src='http://wiki.dominionstrategy.com/images/thumb/3/32/Harbinger.jpg/200px-Harbinger.jpg' alt="Harbinger" />,
   isFaceUp: true,
@@ -25,14 +25,6 @@ const card = {
     player.actions += 1;
 
     pushPhase(state, CUSTOM_PHASE);
-    state.allowEndPhase = () => {
-      return getLastPhase(state);
-    };
-
-    state.render_extra = {
-      cards: player.discard,
-      cardsMove: 'onClickExtraHarbinger'
-    }
 
     return state;
   },
@@ -53,6 +45,21 @@ const card = {
     {
       name: CUSTOM_PHASE,
       allowedMoves: ['onClickExtraHarbinger'],
+      onPhaseBegin: (G, ctx) => {
+        const state = getState(G);
+        const player = currentPlayer(state, ctx);
+
+        state.allowEndPhase = () => {
+          return getLastPhase(state);
+        };
+
+        state.render_extra = {
+          cards: player.discard,
+          cardsMove: 'onClickExtraHarbinger'
+        };
+        
+        return state;
+      },
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
         state.allowEndPhase = undefined;
