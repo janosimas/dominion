@@ -4,7 +4,7 @@ import types from '../../cardTypes';
 import { currentPlayer, getState } from '../../../utils';
 
 import silver from '../../base/cards/silver';
-import { getLastPhase, popPhase, pushPhase } from '../../utils';
+import { getLastPhase, popPhase, pushPhase, playReaction } from '../../utils';
 
 const CUSTOM_PHASE = 'Bureaucrat discard phase';
 
@@ -26,66 +26,40 @@ const card = {
       silver.count--;
     }
 
-    state.attack = true;
     state.active_player = currentPlayer(state, ctx);
     pushPhase(state, CUSTOM_PHASE);
-    state.onHighlightHand = (G, ctx, card) => {
-      if (card.type.includes(types.VICTORY)) {
-        return ' highlight-yellow';
-      }
-
-      return '';
-    };
-    state.custom_onClickHand = (G, ctx, index) => {
-      if (ctx.phase !== CUSTOM_PHASE) {
-        return G;
-      }
-
-      const state = getState(G);
-      const player = currentPlayer(state, ctx);
-      const card = player.hand[index];
-      if (card.type.includes(types.VICTORY)) {
-        player.deck.push(player.hand.splice(index, 1)[0]);
-        state.hasSelectedVictory = true;
-        return state;
-      } else {
-        return state;
-      }
-    };
+    
     return state;
   },
   custom_moves: [],
   custom_phases: [
     {
       name: CUSTOM_PHASE,
-      allowedMoves: ['onClickHand', 'customAction'],
+      allowedMoves: ['onClickHand','customAction'],
       endTurnIf: (G, ctx) => {
         const player = currentPlayer(G, ctx);
-        if(G.end_turn) {
+        // end turn action
+        if (G.end_turn) {
           return true;
         }
 
+        // this happens when the attack
+        // has ended and it's the active player again
         if (G.active_player === player) {
-          return false;
+          return true;
         }
 
-        return !!G.hasSelectedVictory;
-      },
-      onPhaseBegin: (G, ctx) => {
-        const state = getState(G);
-        const player = currentPlayer(state, ctx);
-        if (state.active_player === player) {
-          state.end_turn = true;
-        }
-        
-        return state;
+        // attack condition
+        return !!G.attack_condition;
       },
       onTurnBegin: (G, ctx) => {
-        const state = getState(G);
-        const player = currentPlayer(state, ctx);
-        state.end_turn = false;
+        let state = getState(G);
+        const player = currentPlayer(G, ctx);
         if (state.active_player === player) {
-          state.custom_end_phase = true;
+          // this happens when the attack
+          // has ended and it's the active player again
+          state.end_attack_phase = true;
+          return state;
         }
 
         let hasSelectableVictory = false;
@@ -97,7 +71,14 @@ const card = {
           }
         }
 
-        if (!hasSelectableVictory) {
+        state.attack_condition = hasSelectableVictory;
+
+        // activate reaction cards
+        const [newState, endTurn] = playReaction(state, ctx);
+        state = newState;
+
+        // allow end turn?
+        if (endTurn || !hasSelectableVictory) {
           state.customAction = {
             name: 'End Turn',
             action: (state, ctx) => {
@@ -105,39 +86,69 @@ const card = {
               return state;
             }
           };
-          
         }
 
         return state;
       },
-      
       onTurnEnd: (G, ctx) => {
         const state = getState(G);
         state.customAction = undefined;
         state.end_turn = undefined;
+        state.attack_condition = undefined;
 
         return state;
       },
 
-      onPhaseEnd: (G, ctx) => {
-        const state = getState(G);
-        state.active_player = undefined;
-        state.custom_onClickHand = undefined;
-        state.onHighlightHand = undefined;
-        state.attack = undefined;
-        state.hasSelectedVictory = undefined;
-        state.custom_end_phase = undefined;
-        state.end_turn = undefined;
-        popPhase(state);
-        
-        return state;
-      },
       endPhaseIf: (G, ctx) => {
-        if (G.custom_end_phase) {
+        if (G.end_attack_phase) {
           return getLastPhase(G);
         } else {
           return false;
         }
+      },
+      onPhaseBegin: (G, ctx) => {
+        const state = getState(G);
+        const player = currentPlayer(state, ctx);
+
+        state.onHighlightHand = (G, ctx, card) => {
+          if (card.type.includes(types.VICTORY)) {
+            return ' highlight-yellow';
+          }
+          return '';
+        };
+
+        state.custom_onClickHand = (G, ctx, index) => {
+          if (ctx.phase !== CUSTOM_PHASE) {
+            return G;
+          }
+
+          const state = getState(G);
+          const player = currentPlayer(state, ctx);
+          const card = player.hand[index];
+          if (card.type.includes(types.VICTORY)) {
+            player.deck.unshift(player.hand.splice(index, 1)[0]);
+            state.end_attack_phase = true;
+            return state;
+          } else {
+            return state;
+          }
+        };
+
+        if (state.active_player === player) {
+          state.end_turn = true;
+        }
+
+        return state;
+      },
+      onPhaseEnd: (G, ctx) => {
+        const state = getState(G);
+        state.active_player = undefined;
+        state.end_attack_phase = undefined;
+        state.onHighlightHand = undefined;
+        state.custom_onClickHand = undefined;
+        popPhase(state);
+
+        return state;
       }
     }
   ]
