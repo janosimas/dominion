@@ -27,12 +27,11 @@ const card = {
       return ' highlight';
     };
     
-    state.custom_onClickBoard = (G, ctx, player, card) => {
+    state.custom_onClickBoard = (state, ctx, player, card) => {
       if (ctx.phase !== CUSTOM_PHASE) {
-        return G;
+        return state;
       }
 
-      let state = getState(G);
       if(card.cost <= 4) {
         player.discard.push(card);
         card.count--;

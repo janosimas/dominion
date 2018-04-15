@@ -56,10 +56,9 @@ const card = {
       },
       onPhaseEnd: (G, ctx) => {
         const state = getState(G);
-        state.custom_onClickBoard = (G, ctx, player, card) => {
-          const state = getState(G);
-          if (getCardCost(G, ctx, card) > state.remodel_temp_treasure) {
-            return G;
+        state.custom_onClickBoard = (state, ctx, player, card) => {
+          if (getCardCost(state, ctx, card) > state.remodel_temp_treasure) {
+            return state;
           }
 
           player.discard.push(card);
