@@ -7,6 +7,8 @@ import phases from './phases';
 import baseModule from './base/module';
 import coreModule from './core/module';
 
+import province from './base/cards/province';
+
 
 const Dominion = {
   setup: (ctx) => {
@@ -16,14 +18,21 @@ const Dominion = {
       onPlayHandTrigger: [],
       players: {},
       cardMap: populateCardMap([baseModule, coreModule]),
-      boardCards: [...baseModule.cards, ...coreModule.cards],
+      // base game cards, always present
+      boardCards: [...baseModule.cards],
       phase_pile: [phases.ACTION_PHASE],
       playerView: PlayerView.STRIP_SECRETS
     };
 
+    // create n players for the game
     for (var i = 0; i < ctx.numPlayers; i++) {
       G.players[i] = { ...createPlayer(ctx), name: 'Player ' + (i + 1) };
     }
+
+    // get 10 random cards
+    // and sort by cost
+    const coreCards = ctx.random.Shuffle(coreModule.cards);
+    G.boardCards.push(...coreCards.slice(0, 10).sort((a, b) => a.cost - b.cost));
 
     return G;
   },
@@ -76,7 +85,9 @@ const Dominion = {
         }
       }
 
-      if (emptyCount < 2) {
+      // if less then 3 piles
+      // AND there are still province in the game
+      if (emptyCount < 2 && province.count !== 0) {
         return undefined;
       } else {
         // game end, check victory condition
