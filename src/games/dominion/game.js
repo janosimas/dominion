@@ -26,13 +26,14 @@ const Dominion = {
 
     // create n players for the game
     for (var i = 0; i < ctx.numPlayers; i++) {
-      G.players[i] = { ...createPlayer(ctx), name: 'Player ' + (i + 1) };
+      G.players[String(i)] = createPlayer(ctx);
+      G.players[String(i)].name = 'Player ' + (i + 1);
     }
 
     // get 10 random cards
     // and sort by cost
     const coreCards = ctx.random.Shuffle(coreModule.cards);
-    G.boardCards.push(...coreCards.slice(0, 10).sort((a, b) => a.cost - b.cost));
+    G.boardCards.push(...coreCards.slice(0, 1).sort((a, b) => a.cost - b.cost));
 
     return G;
   },

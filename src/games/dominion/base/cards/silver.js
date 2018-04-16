@@ -3,8 +3,8 @@ import React from 'react';
 
 const card = {
   name: 'Silver',
-  back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
-  front: <img src='http://wiki.dominionstrategy.com/images/thumb/5/5d/Silver.jpg/200px-Silver.jpg' alt="Silver" />,
+  // back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
+  // front: <img src='http://wiki.dominionstrategy.com/images/thumb/5/5d/Silver.jpg/200px-Silver.jpg' alt="Silver" />,
   isFaceUp: true,
   canHover: true,
   count: 10,
