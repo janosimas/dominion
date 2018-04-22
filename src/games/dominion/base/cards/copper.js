@@ -1,10 +1,8 @@
 import types from '../../cardTypes';
-import React from 'react';
 
 const card = {
   name: 'Copper',
-  // back: <img src='http://wiki.dominionstrategy.com/images/c/ca/Card_back.jpg' alt='Deck' />,
-  // front: <img src='http://wiki.dominionstrategy.com/images/thumb/f/fb/Copper.jpg/200px-Copper.jpg' alt="Copper" />,
+  front: 'http://wiki.dominionstrategy.com/images/thumb/f/fb/Copper.jpg/200px-Copper.jpg',
   isFaceUp: true,
   canHover: true,
   count: 60,

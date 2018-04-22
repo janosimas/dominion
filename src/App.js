@@ -4,9 +4,9 @@ import DominionBoard from './games/dominion/board';
 
 const App = Client({
   game: Dominion,
-  numPlayers: 1,
+  numPlayers: 2,
   board: DominionBoard,
-  multiplayer: { server: 'localhost:8000' }
+  multiplayer: { server: 'localhost:8000' },
 });
 
 export default App;

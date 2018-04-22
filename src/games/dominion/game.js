@@ -11,6 +11,7 @@ import province from './base/cards/province';
 
 
 const Dominion = {
+  name: 'Dominion',
   setup: (ctx) => {
     let G = {
       play_area: [],
@@ -21,7 +22,7 @@ const Dominion = {
       // base game cards, always present
       boardCards: [...baseModule.cards],
       phase_pile: [phases.ACTION_PHASE],
-      playerView: PlayerView.STRIP_SECRETS
+      // playerView: PlayerView.STRIP_SECRETS
     };
 
     // create n players for the game
@@ -177,8 +178,6 @@ const Dominion = {
           }
 
           return false;
-          // const player = currentPlayer(G, ctx);
-          // return player.actions === 0;
         },
         onPhaseBegin: (G, ctx) => {
           if(G.phase_pile.length !== 1 

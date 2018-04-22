@@ -53,7 +53,8 @@ class DominionBoard extends React.Component {
   renderCards(cards, G, ctx) {
     let tbody = [];
     for (let index = 0; index < cards.length; index++) {
-      tbody.push(<Card {...cards[index]} key={index + 100} />);
+      const image = <img src={cards[index].front} alt={cards[index].name}/>;
+      tbody.push(<Card {...cards[index]} front={image} key={index + 100} />);
     }
     return tbody;
   }
