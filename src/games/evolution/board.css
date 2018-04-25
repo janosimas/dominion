@@ -1,0 +1,32 @@
+
+.player-board-list {
+  border: 1px solid black;
+}
+
+.player-board {
+  border: 1px solid black;
+}
+
+.player-hand {
+  border: 1px solid black;
+}
+
+.specie-board {
+  border: 1px solid black;
+}
+
+.specie-traits {
+  border: 1px solid black;
+}
+
+.trait {
+  border: 1px solid black;
+}
+
+.specie-population {
+  border: 1px solid black;
+}
+
+.specie-body-size {
+  border: 1px solid black;
+}
