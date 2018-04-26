@@ -1,8 +1,8 @@
 import { Game, PlayerView } from 'boardgame.io/dist/core';
 import { getState, currentPlayer } from '../utils';
-import { drawCard } from '../dominion/utils';
 import Specie from './specie';
 import Player from './player';
+import PHASES from './phases';
 
 const getCardFromHand = (state, ctx, index) => {
   const player = currentPlayer(state, ctx);
@@ -13,6 +13,29 @@ const getCardFromHand = (state, ctx, index) => {
 
   const card = player.hand.splice(index, 1);
   return card;
+};
+
+/**
+ * Draw a number of cards from the deck into the player hand
+ *
+ * if no cards in the deck, shuffle the discard pile
+ *
+ * @param {Player object} player Player drawing the cards
+ * @param {Number} [number=1] Number of cards to draw
+ */
+const drawCard = (state, ctx, player, number) => {
+  number = number || 1;
+  for (let index = 0; index < number; index++) {
+    const card = state.secret.traitsDeck.pop();
+    if (!card) {
+      // empty deck
+      break;
+    }
+
+    player.hand.push(card);
+  }
+
+  return player;
 };
 
 /**
@@ -169,7 +192,7 @@ const Evolution = {
       }
 
       player.selectedSpecie = undefined;
-      state.endTurn;
+      state.endTurn = true;
       return state;
     },
     attackOtherSpecie: (G, ctx, attackedPlayerIndex, attackedSpecieIndex) => {
@@ -199,7 +222,7 @@ const Evolution = {
       specie.food += food;
 
       player.selectedSpecie = undefined;
-      state.endTurn;
+      state.endTurn = true;
       return state;
     },
     //////////////////////////////////////////
@@ -210,7 +233,7 @@ const Evolution = {
     },
     phases: [
       {
-        name: 'Play food phase',
+        name: PHASES.PLAY_FOOD_PHASE,
         allowedMoves: ['clickOnCardForFood'],
         endTurnIf: (G, ctx) => {
           return G.endTurn;
@@ -222,7 +245,7 @@ const Evolution = {
         },
         endPhaseIf: (G, ctx) => {
           if (G.secret.selectedCards.length === ctx.players.length) {
-            return 'Card action phase';
+            return PHASES.CARD_ACTION_PHASE;
           } else {
             return false;
           }
@@ -231,7 +254,7 @@ const Evolution = {
           const state = getState(G, ctx);
           state.secret.selectedCards = [];
           for (const player of state.players) {
-            drawCard(ctx, player, 4+player.species.length);
+            drawCard(state, ctx, player, 4+player.species.length);
           }
           return state;
         },
@@ -245,7 +268,7 @@ const Evolution = {
         }
       },
       {
-        name: 'Card action phase',
+        name: PHASES.CARD_ACTION_PHASE,
         allowedMoves: ['clickOnCard', 'newTrait', 'increasePopulation', 'increaseBodySize', 'createNewSpecie'],
         endTurnIf: (G, ctx) => {
           const player = currentPlayer(G, ctx);
@@ -263,14 +286,14 @@ const Evolution = {
           }
           
           if(endPhase) {
-            return 'Eat phase';
+            return PHASES.EAT_PHASE;
           } else {
             return false;
           }
         }
       },
       {
-        name: 'Eat phase', 
+        name: PHASES.EAT_PHASE, 
         allowedMoves: ['selectSpecie', 'eatFromWateringHole', 'attackOtherSpecie'],
         onPhaseEnd: (G, ctx) => {
           const state = getState(G, ctx);

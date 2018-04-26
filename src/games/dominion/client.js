@@ -1,6 +1,6 @@
 import { Client } from 'boardgame.io/react';
-import Dominion from './games/dominion/game';
-import DominionBoard from './games/dominion/board';
+import Dominion from './game';
+import DominionBoard from './board';
 
 const App = Client({
   game: Dominion,

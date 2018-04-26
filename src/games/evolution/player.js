@@ -1,4 +1,4 @@
-import { Specie } from './specie';
+import Specie from './specie';
 
 class Player {
   constructor(name) {
