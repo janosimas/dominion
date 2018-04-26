@@ -9,6 +9,13 @@ class PlayerBoard extends React.Component {
     const player = this.props.player;
     const species = player.species;
 
+    let clickOnCard = undefined;
+    const phase = this.props.phase;
+    if (phase === PHASES.CARD_ACTION_PHASE
+      || phase === PHASES.PLAY_FOOD_PHASE) {
+      clickOnCard = this.props.moves.clickOnCard;
+    }
+
     const handRender = [];
     // hand is a secret parameter
     // it's only available for the player owning it
@@ -16,26 +23,18 @@ class PlayerBoard extends React.Component {
       let c = 0;
       for (const card of player.hand) {
         c++;
-        let clickOnCard = undefined;
-        const phase = this.props.phase;
-        if(phase === PHASES.CARD_ACTION_PHASE
-          || phase === PHASES.PLAY_FOOD_PHASE) {
-          clickOnCard = this.props.moves.clickOnCard;
-        }
         handRender.push(<div onClick={() => clickOnCard(c)} className='player-hand' key={c}>{card.name}</div>);
       }
     }
 
-
+    let clickOnSpecie = undefined;
+    if (phase === PHASES.EAT_PHASE) {
+      clickOnSpecie = this.props.moves.clickOnSpecie;
+    }
     const speciesRender = [];
     let i = 0;
     for (const specie of species) {
       i++;
-      let clickOnSpecie = undefined;
-      const phase = this.props.phase;
-      if (phase === PHASES.EAT_PHASE) {
-        clickOnSpecie = this.props.moves.clickOnSpecie;
-      }
       speciesRender.push(<SpecieBoard onClick={() => clickOnSpecie(i)} specie={specie} key={i} />);
     }
 
