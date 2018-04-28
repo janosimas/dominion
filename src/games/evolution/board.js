@@ -4,53 +4,79 @@ import PlayerBoard from './react-components/player';
 
 import './board.css';
 import PHASES from './phases';
+import { currentPlayer } from '../utils';
 
 class EvolutionBoard extends React.Component {
   constructor(props) {
     super(props);
 
     this.moves = {
-      clickOnCard(cardIndex) {
+      clickOnCard: (cardIndex) => {
         if (this.props.ctx.phase === PHASES.CARD_ACTION_PHASE) {
           this.props.moves.clickOnCard(cardIndex);
         } else if (this.props.ctx.phase === PHASES.PLAY_FOOD_PHASE) {
           this.props.moves.clickOnCardForFood(cardIndex);
         }
       },
-      clickOnSpecie(specieIndex) {
+      clickOnSpecie: (specieIndex) => {
         this.props.moves.selectSpecie(specieIndex);
       },
-      clickOnWateringHole() {
+      clickOnWateringHole: () => {
         this.props.moves.eatFromWateringHole();
       },
-      attackOtherSpecie(G, ctx, specie) {
+      attackOtherSpecie : (G, ctx, specie) => {
 
       },
-      newTrait(G, ctx, trait) {
+      newTrait: (G, ctx, trait) => {
 
       },
-      increasePopulation(G, ctx) {
+      increasePopulation: (G, ctx) => {
 
       },
-      increaseBodySize(G, ctx) {
+      increaseBodySize: (G, ctx) => {
 
       },
-      createNewSpecie(G, ctx) {
+      createNewSpecie: (G, ctx) => {
 
       },
     };
   }
   
+  renderControls(G, ctx) {
+    let player = currentPlayer(G, ctx);
+
+    let controls = [];
+    controls.push(<div key='current-player'>Current player: {player.name}</div>);
+    controls.push(<div key='current-phase'>Current phase: {ctx.phase}</div>);
+    
+    return controls;
+  }
+
   render() {
-    const players = this.props.G.players;
+    const G = this.props.G;
+    const ctx = this.props.ctx;
+    const players = G.players;
     const playersRender = [];
     for (const player of players) {
-      playersRender.push(<PlayerBoard moves={this.props.moves} phase={this.props.ctx.phase} player={player} key={player.name} />);
+      playersRender.push(
+        <PlayerBoard moves={this.moves}
+          ctx={this.props.ctx}
+          player={player}
+          key={player.name}
+        />
+      );
     }
 
+    const control = this.renderControls(G, ctx);
+
     return (
-      <div className='player-board-list'>
-        {playersRender}
+      <div>
+        <div className='player-board-list'>
+          {playersRender}
+        </div>
+        <div className='controls'>
+          {control}
+        </div>
       </div>
     );
   }

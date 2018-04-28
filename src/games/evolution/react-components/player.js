@@ -1,5 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import { Card } from 'boardgame.io/ui';
+
 import SpecieBoard from './specie';
 import Player from '../player';
 import PHASES from '../phases';
@@ -9,40 +12,47 @@ class PlayerBoard extends React.Component {
     const player = this.props.player;
     const species = player.species;
 
+    const currentPlayer = this.props.ctx.actionPlayers[0];
     let clickOnCard = undefined;
-    const phase = this.props.phase;
-    if (phase === PHASES.CARD_ACTION_PHASE
-      || phase === PHASES.PLAY_FOOD_PHASE) {
+    const phase = this.props.ctx.phase;
+    if (currentPlayer === player.id 
+      && (phase === PHASES.CARD_ACTION_PHASE
+          || phase === PHASES.PLAY_FOOD_PHASE)) {
       clickOnCard = this.props.moves.clickOnCard;
     }
 
-    const handRender = [];
-    // hand is a secret parameter
-    // it's only available for the player owning it
-    if(player.hand) {
-      let c = 0;
-      for (const card of player.hand) {
-        c++;
-        handRender.push(<div onClick={() => clickOnCard(c)} className='player-hand' key={c}>{card.name}</div>);
-      }
-    }
+    const handRender = player.hand.map((card, index)  => {
+      return  <Card 
+        className='card'
+        isFaceUp={true}
+        canHover={currentPlayer === player.id} 
+        onClick={clickOnCard && (() => clickOnCard(index))} 
+        front={card.name}
+        key={index} />;
+    });
 
-    let clickOnSpecie = undefined;
-    if (phase === PHASES.EAT_PHASE) {
-      clickOnSpecie = this.props.moves.clickOnSpecie;
-    }
-    const speciesRender = [];
-    let i = 0;
-    for (const specie of species) {
-      i++;
-      speciesRender.push(<SpecieBoard onClick={() => clickOnSpecie(i)} specie={specie} key={i} />);
-    }
+    const speciesRender = species.map((specie, index) => {
+      return <SpecieBoard 
+        ctx={this.props.ctx}
+        player={player}
+        moves={this.props.moves}
+        specie={specie}
+        id={index}
+        key={index}
+      />;
+    });
 
     return (
       <div className='player-board'>
-        {player.name}
-        {handRender}
-        {speciesRender}
+        <div className='player-name'>
+          {player.name}
+        </div>
+        <div className='player-hand'>
+          {handRender}
+        </div>
+        <div className='species-list'>
+          {speciesRender}
+        </div>
       </div>
     );
   }
@@ -51,7 +61,7 @@ class PlayerBoard extends React.Component {
 PlayerBoard.propTypes = {
   player: PropTypes.instanceOf(Player),
   moves: PropTypes.object,
-  phase: PropTypes.string,
+  ctx: PropTypes.object,
 };
 
 export default PlayerBoard;

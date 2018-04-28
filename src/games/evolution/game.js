@@ -3,6 +3,7 @@ import { getState, currentPlayer } from '../utils';
 import Specie from './specie';
 import Player from './player';
 import PHASES from './phases';
+import Ambush from './traits/ambush';
 
 const getCardFromHand = (state, ctx, index) => {
   const player = currentPlayer(state, ctx);
@@ -69,11 +70,11 @@ const Evolution = {
 
     // create n players for the game
     for (var i = 0; i < ctx.numPlayers; i++) {
-      G.players.push(new Player('Player '+(i+1)));
+      G.players.push(new Player(i, 'Player '+(i+1)));
     }
 
-    G.secret.traitsDeck = [];
-
+    G.secret.traitsDeck = ctx.random.Shuffle(Ambush);
+    
     return G;
   },
   moves: {
@@ -173,6 +174,8 @@ const Evolution = {
       const state = getState(G, ctx);
       const player = currentPlayer(state, ctx);
       player.selectedSpecie = specieIndex;
+      player.species[specieIndex].population++;
+      return state;
     },
     eatFromWateringHole: (G, ctx) => {
       const state = getState(G, ctx);
@@ -244,7 +247,7 @@ const Evolution = {
           return state;
         },
         endPhaseIf: (G, ctx) => {
-          if (G.secret.selectedCards.length === ctx.players.length) {
+          if (G.secret.selectedCards && G.secret.selectedCards.length === G.players.length) {
             return PHASES.CARD_ACTION_PHASE;
           } else {
             return false;
