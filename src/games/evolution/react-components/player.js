@@ -12,13 +12,21 @@ class PlayerBoard extends React.Component {
     const player = this.props.player;
     const species = player.species;
 
-    const currentPlayer = this.props.ctx.actionPlayers[0];
+    const currentPlayer = this.props.ctx.currentPlayer;
     let clickOnCard = undefined;
+    let createNewSpecie = undefined;
     const phase = this.props.ctx.phase;
-    if (currentPlayer === player.id 
-      && (phase === PHASES.CARD_ACTION_PHASE
-          || phase === PHASES.PLAY_FOOD_PHASE)) {
-      clickOnCard = this.props.moves.clickOnCard;
+    if (currentPlayer === this.props.player.id) {
+      switch (phase) {
+      case PHASES.CARD_ACTION_PHASE:
+        createNewSpecie = this.props.moves.createNewSpecie;
+        // falls through
+      case PHASES.PLAY_FOOD_PHASE:
+        clickOnCard = this.props.moves.clickOnCard;
+        break;
+      default:
+        break;
+      }
     }
 
     const handRender = player.hand.map((card, index)  => {
@@ -41,6 +49,11 @@ class PlayerBoard extends React.Component {
         key={index}
       />;
     });
+
+    const size = speciesRender.length;
+    for (let index = size; index >= 0 ; index--) {
+      speciesRender.splice(index, 0, <div className='between-species' key={100 + index} onClick={() => createNewSpecie(index)} ></div>);
+    }
 
     return (
       <div className='player-board'>

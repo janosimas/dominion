@@ -24,20 +24,20 @@ class EvolutionBoard extends React.Component {
       clickOnWateringHole: () => {
         this.props.moves.eatFromWateringHole();
       },
-      attackOtherSpecie : (G, ctx, specie) => {
-
+      attackOtherSpecie: (playerIndex, specieIndex) => {
+        this.props.moves.attackOtherSpecie(playerIndex, specieIndex);
       },
-      newTrait: (G, ctx, trait) => {
-
+      newTrait: (specieIndex) => {
+        this.props.moves.newTrait(specieIndex);
       },
-      increasePopulation: (G, ctx) => {
-
+      increasePopulation: (specieIndex) => {
+        this.props.moves.increasePopulation(specieIndex);
       },
-      increaseBodySize: (G, ctx) => {
-
+      increaseBodySize: (specieIndex) => {
+        this.props.moves.increaseBodySize(specieIndex);
       },
-      createNewSpecie: (G, ctx) => {
-
+      createNewSpecie: (specieIndex) => {
+        this.props.moves.createNewSpecie(specieIndex);
       },
     };
   }

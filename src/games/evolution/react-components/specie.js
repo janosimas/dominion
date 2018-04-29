@@ -12,23 +12,37 @@ class SpecieBoard extends React.Component {
       traitsRender.push(<div>{trait.name}</div>);
     }
 
-    const currentPlayer = this.props.ctx.actionPlayers[0];
+    const currentPlayer = this.props.ctx.currentPlayer;
     const phase = this.props.ctx.phase;
     let clickOnSpecie = undefined;
-    if (currentPlayer === this.props.player.id && phase === PHASES.EAT_PHASE) {
-      clickOnSpecie = () => this.props.moves.clickOnSpecie(this.props.id);
+    let clinOnTrait = undefined;
+    let clinOnPopulation = undefined;
+    let clinOnBodySize = undefined;
+    if (currentPlayer === this.props.player.id) {
+      switch (phase) {
+      case PHASES.EAT_PHASE:
+        clickOnSpecie = () => this.props.moves.clickOnSpecie(this.props.id);
+        break;
+      case PHASES.CARD_ACTION_PHASE:
+        clinOnPopulation = () => this.props.moves.increasePopulation(this.props.id);
+        clinOnBodySize = () => this.props.moves.increaseBodySize(this.props.id);
+        clinOnTrait = () => this.props.moves.newTrait(this.props.id);
+        break;
+      default:
+        break;
+      }
     }
 
     return (
       <div className='specie-board' onClick={clickOnSpecie} >
-        <div className='specie-traits'>
+        <div className='specie-traits' onClick={clinOnTrait}>
           {traitsRender}
         </div>
         <div className='specie-values'>
-          <div className='specie-population'>
+          <div className='specie-population' onClick={clinOnPopulation}>
             {specie.population}
           </div>
-          <div className='specie-body-size'>
+          <div className='specie-body-size' onClick={clinOnBodySize}>
             {specie.bodySize}
           </div>
         </div>

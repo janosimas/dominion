@@ -1,7 +1,7 @@
 // auxiliary functions
 
 let currentPlayer = (state, ctx) => {
-  return state.players[ctx.actionPlayers[0]];
+  return state.players[ctx.currentPlayer];
 };
 
 let getState = (G) => {

@@ -1,4 +1,4 @@
-import { Game, PlayerView } from 'boardgame.io/dist/core';
+import { Game } from 'boardgame.io/dist/core';
 import { getState, currentPlayer } from '../utils';
 import Specie from './specie';
 import Player from './player';
@@ -12,7 +12,7 @@ const getCardFromHand = (state, ctx, index) => {
     return undefined;
   }
 
-  const card = player.hand.splice(index, 1);
+  const card = player.hand.splice(index, 1)[0];
   return card;
 };
 
@@ -101,6 +101,12 @@ const Evolution = {
       }
 
       const player = currentPlayer(state, ctx);
+      // if the player change his mind,
+      // put the old card back in his hand
+      if (player.selectedCard) {
+        player.hand.push(player.selectedCard);
+      }
+
       player.selectedCard = card;
       return state;
     },
@@ -163,7 +169,7 @@ const Evolution = {
         return G;
       }
 
-      player.species.insert(position, new Specie());
+      player.species.splice(position, 0, new Specie());
 
       player.selectedCard = undefined;
       return state;
@@ -232,7 +238,7 @@ const Evolution = {
   },
   flow: {
     endGameIf: (G, ctx) => {
-      return false;
+      return undefined;
     },
     phases: [
       {
@@ -257,7 +263,8 @@ const Evolution = {
           const state = getState(G, ctx);
           state.secret.selectedCards = [];
           for (const player of state.players) {
-            drawCard(state, ctx, player, 4+player.species.length);
+            // drawCard(state, ctx, player, 4 + player.species.length);
+            drawCard(state, ctx, player, 3);
           }
           return state;
         },

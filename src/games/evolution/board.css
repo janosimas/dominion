@@ -27,7 +27,7 @@
   flex: 0 1 auto;
   flex-direction: row;
   flex-wrap: wrap;
-  align-content: space-around;
+  align-content: flex-start;
 }
 
 .card {
@@ -40,6 +40,11 @@
   flex: 1 1 auto;
   flex-direction: row;
   justify-content: space-evenly;
+}
+
+.between-species {
+  background: red;
+  width: 10px;
 }
 
 .specie-board {
