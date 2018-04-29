@@ -1,11 +1,23 @@
 
+.play-area {
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+}
+
+.main-board {
+  display: flex;
+  flex: 1 1 50px;
+  background: coral;
+  width: 80%;
+  align-items: center;
+}
+
 .player-board-list {
   border: 1px solid black;
   width: 80%;
-  height: 600px;
-  background: pink;
   display: flex;
-  flex: auto;
+  flex: 4 1 auto;
   flex-direction: column;
 }
 
@@ -13,7 +25,7 @@
   border: 3px solid black;
   background: grey;
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 300px;
   flex-direction: column;
 }
 
@@ -22,41 +34,41 @@
 }
 
 .player-hand {
-  background: plum;
   display: flex;
-  flex: 0 1 auto;
+  flex: 0 1 145px;
   flex-direction: row;
   flex-wrap: wrap;
   align-content: flex-start;
 }
 
 .card {
-  border: 1px orange;
   margin: 2px;
 }
 
 .species-list {
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 50px;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: stretch;
 }
 
 .between-species {
-  background: red;
-  width: 10px;
+  width: 20px;
 }
 
 .specie-board {
+  border-radius:10%;
   border: 5px black;
-  background: greenyellow;
+  background: #2ecc40;
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
 }
 
 .specie-traits {
-  background: burlywood;
+  padding: 5%;
+  border-radius:10%;
+  background: #2eccaa;
   display: flex;
   flex: 4 1 auto;
   flex-direction: column;
@@ -67,7 +79,6 @@
 }
 
 .specie-values {
-  border: 1px solid black;
   display: flex;
   flex: 1 1 0px;
   flex-direction: row;
@@ -75,11 +86,20 @@
 }
 
 .specie-population {
-  border: 1px solid black;
+  border-radius:30%;
+  border: 1px solid green;
   margin: 1px;
 }
 
 .specie-body-size {
-  border: 1px solid black;
+  border-radius:30%;
+  border: 1px solid orangered;
   margin: 1px;
+}
+
+.specie-food {
+  border-radius:50%;
+  border: 1px solid green;
+  margin: 1px;
+  background: green;
 }

@@ -180,7 +180,6 @@ const Evolution = {
       const state = getState(G, ctx);
       const player = currentPlayer(state, ctx);
       player.selectedSpecie = specieIndex;
-      player.species[specieIndex].population++;
       return state;
     },
     eatFromWateringHole: (G, ctx) => {
@@ -195,6 +194,7 @@ const Evolution = {
         return G;
       }
 
+      state.wateringHole--;
       specie.food++;
       if(specie.food > specie.population) {
         specie.food = specie.population;

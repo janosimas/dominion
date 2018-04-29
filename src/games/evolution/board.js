@@ -71,8 +71,13 @@ class EvolutionBoard extends React.Component {
 
     return (
       <div>
-        <div className='player-board-list'>
-          {playersRender}
+        <div className='play-area'>
+          <div className='main-board' onClick={this.moves.clickOnWateringHole} >
+            <h3>Available food:</h3>{G.wateringHole}
+          </div>
+          <div className='player-board-list'>
+            {playersRender}
+          </div>
         </div>
         <div className='controls'>
           {control}

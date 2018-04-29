@@ -45,6 +45,9 @@ class SpecieBoard extends React.Component {
           <div className='specie-body-size' onClick={clinOnBodySize}>
             {specie.bodySize}
           </div>
+          <div className='specie-food'>
+            {specie.food}
+          </div>
         </div>
       </div>
     );
