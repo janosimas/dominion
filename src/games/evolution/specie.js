@@ -1,5 +1,7 @@
 class Specie {
-  constructor() {
+  constructor(player, index) {
+    this.player = player;
+    this.index = index;
     this.population = 1;
     this.bodySize = 1;
     this.food = 0;

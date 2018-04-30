@@ -61,7 +61,9 @@ const Evolution = {
 
     // create n players for the game
     for (var i = 0; i < ctx.numPlayers; i++) {
-      G.players.push(new Player(i, 'Player '+(i+1)));
+      const player = new Player(i, 'Player ' + (i + 1));
+      player.species.push(new Specie(player, 0));
+      G.players.push(player);
     }
 
     G.secret.traitsDeck = ctx.random.Shuffle(BaseTraits);
@@ -158,7 +160,7 @@ const Evolution = {
       }
 
       getCardFromHand(state, ctx, player.selectedCardIndex);
-      player.species.splice(position, 0, new Specie());
+      player.species.splice(position, 0, new Specie(player, position));
       player.selectedCardIndex = undefined;
       return state;
     },

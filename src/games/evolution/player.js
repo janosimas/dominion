@@ -1,5 +1,3 @@
-import Specie from './specie';
-
 class Player {
   constructor(id, name) {
     this.id = String(id);
@@ -7,8 +5,9 @@ class Player {
     this.food = 0;
     this.hand = [];
     // players start with one specie
-    this.species = [new Specie(), new Specie(), new Specie()];
+    this.species = [];
   }
 }
+
 
 export default Player;
