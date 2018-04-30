@@ -128,6 +128,24 @@ const canBeAttacked = (defendingSpecies, defendingSpecieIndex, specie) => {
     }
   }
 
+  if(defendingSpecieIndex > 0) {
+    const leftDefendingSpecie = defendingSpecies[defendingSpecieIndex-1];
+    for (const trait of leftDefendingSpecie.traits) {
+      if (trait.canBeAttackedByLeft && !trait.canBeAttackedByLeft(leftDefendingSpecie, specie)) {
+        return false;
+      }
+    }
+  }
+
+  if (defendingSpecieIndex + 1 < defendingSpecies.length) {
+    const rightDefendingSpecie = defendingSpecies[defendingSpecieIndex+1];
+    for (const trait of rightDefendingSpecie.traits) {
+      if (trait.canBeAttackedByLeft && !trait.canBeAttackedByLeft(rightDefendingSpecie, specie)) {
+        return false;
+      }
+    }
+  }
+
   return true;
 };
 
