@@ -8,6 +8,29 @@ class Specie {
     this.isHungry.bind(this);
     this.isCarnivore.bind(this);
     this.canBeAttackedBy.bind(this);
+    this.attack.bind(this);
+    this.defense.bind(this);
+  }
+
+  attack() {
+    let attack = this.bodySize;
+    for (const trait of this.traits) {
+      if (trait.increaseAttack) {
+        attack += trait.increaseAttack(this);
+      }
+    }
+
+    return attack;
+  }
+
+  defense() {
+    let defense = this.bodySize;
+    for (const trait of this.traits) {
+      if (trait.increaseDefense) {
+        defense += trait.increaseDefense(this);
+      }
+    }
+    return defense;
   }
 
   canBeAttackedBy(attackerSpecie) {

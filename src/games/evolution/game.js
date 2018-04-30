@@ -41,7 +41,7 @@ const attackOtherSpecie = (G, ctx, attackedPlayerIndex, defendingSpecieIndex) =>
 
   const missingFood = specie.population - specie.food;
   const food = defendingSpecie.bodySize > missingFood ? missingFood : defendingSpecie.bodySize;
-  eat(player.species, player.selectedSpecie, food, state, 'foodBank', FOOD_TYPE.MEAT);
+  eat(player.species, player.selectedSpecie, food, state, 'foodBank', [FOOD_TYPE.MEAT, FOOD_TYPE.ATTACK]);
 
   player.selectedSpecie = undefined;
   state.endTurn = true;
@@ -206,7 +206,7 @@ const Evolution = {
       }
 
       let food = 1;
-      eat(player.species, player.selectedSpecie, food, state, 'wateringHole', FOOD_TYPE.PLANT);
+      eat(player.species, player.selectedSpecie, food, state, 'wateringHole', [FOOD_TYPE.PLANT]);
       
       player.selectedSpecie = undefined;
       state.endTurn = true;

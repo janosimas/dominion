@@ -72,8 +72,11 @@ const triggerSpecieGotFoodGlobal = (species, specieIndex, state, source, type) =
   for (let i = 0; i < species.length; ++i) {
     const specie = species[i];
     for (const trait of specie.traits) {
-      if (trait.globalSpecieGotFood && trait.globalSpecieGotFood(state, source, type)) {
-        eat(species, i, state, source, type);
+      if (trait.globalSpecieGotFood) {
+        const {food, newSource, newType} = trait.globalSpecieGotFood(state, source, type);
+        if(food) {
+          eat(species, i, food, state, newSource, newType);
+        }
       }
     }
   }
@@ -109,7 +112,7 @@ const drawCard = (state, ctx, player, number) => {
  * @param {Specie} attackedSpecie
  */
 const canAttack = (specie, attackedSpecie) => {
-  return specie.bodySize > attackedSpecie.bodySize;
+  return specie.attack() > attackedSpecie.defense();
 };
 
 /**

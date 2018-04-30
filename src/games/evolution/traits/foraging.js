@@ -10,7 +10,7 @@ class Foraging extends Trait {
   }
 
   specieGotFood(species, specieIndex, state, source, type) {
-    if (type === FOOD_TYPES.PLANT) {
+    if (type.includes(FOOD_TYPES.PLANT)) {
       let food = 1;
       eat(species, specieIndex, food, state, source, type, false);
     }
