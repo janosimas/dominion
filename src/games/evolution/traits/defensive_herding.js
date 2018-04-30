@@ -8,8 +8,9 @@ class DefensiveHerding extends Trait {
     this.canBeAttackedBy.bind(this);
   }
 
-  canBeAttackedBy(defendingSpecie, attackerSpecie) {
-    return attackerSpecie.population > defendingSpecie.population;
+  canBeAttackedBy(attackerSpecie, G) {
+    const { specie } = this.getSpecie(G);
+    return attackerSpecie.population > specie.population;
   }
 }
 

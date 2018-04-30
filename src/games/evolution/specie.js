@@ -1,6 +1,6 @@
 class Specie {
-  constructor(player, index) {
-    this.player = player;
+  constructor(playerIndex, index) {
+    this.playerIndex = playerIndex;
     this.index = index;
     this.population = 1;
     this.bodySize = 1;
@@ -12,6 +12,10 @@ class Specie {
     this.canBeAttackedBy.bind(this);
     this.attack.bind(this);
     this.defense.bind(this);
+  }
+
+  getPlayer(G) {
+    return G.players[this.playerIndex];
   }
 
   attack() {

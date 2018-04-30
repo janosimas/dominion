@@ -120,10 +120,10 @@ const canAttack = (specie, attackedSpecie) => {
  * @param {Specie} defendingSpecie
  * @param {Specie} specie
  */
-const canBeAttacked = (defendingSpecies, defendingSpecieIndex, specie) => {
+const canBeAttacked = (defendingSpecies, defendingSpecieIndex, specie, G) => {
   const defendingSpecie = defendingSpecies[defendingSpecieIndex];
   for (const trait of defendingSpecie.traits) {
-    if (trait.canBeAttackedBy && !trait.canBeAttackedBy(defendingSpecie, specie)) {
+    if (trait.canBeAttackedBy && !trait.canBeAttackedBy(specie, G)) {
       return false;
     }
   }
@@ -131,7 +131,7 @@ const canBeAttacked = (defendingSpecies, defendingSpecieIndex, specie) => {
   if(defendingSpecieIndex > 0) {
     const leftDefendingSpecie = defendingSpecies[defendingSpecieIndex-1];
     for (const trait of leftDefendingSpecie.traits) {
-      if (trait.canBeAttackedByLeft && !trait.canBeAttackedByLeft(leftDefendingSpecie, specie)) {
+      if (trait.canBeAttackedByLeft && !trait.canBeAttackedByLeft(specie, G)) {
         return false;
       }
     }
@@ -140,7 +140,7 @@ const canBeAttacked = (defendingSpecies, defendingSpecieIndex, specie) => {
   if (defendingSpecieIndex + 1 < defendingSpecies.length) {
     const rightDefendingSpecie = defendingSpecies[defendingSpecieIndex+1];
     for (const trait of rightDefendingSpecie.traits) {
-      if (trait.canBeAttackedByLeft && !trait.canBeAttackedByLeft(rightDefendingSpecie, specie)) {
+      if (trait.canBeAttackedByLeft && !trait.canBeAttackedByLeft(specie, G)) {
         return false;
       }
     }

@@ -7,9 +7,10 @@ class Symbiosis extends Trait {
     this.canBeAttackedBy.bind(this);
   }
 
-  canBeAttackedBy(attackerSpecie) {
-    if((this.player.species.length) > this.index+1) {
-      const specieToTheRight = this.player.species(this.index+1);
+  canBeAttackedBy(attackerSpecie, G) {
+    const player = this.getPlayer(G);
+    if((player.species.length) > this.index+1) {
+      const specieToTheRight = player.species(this.index+1);
       if (this.bodySize < specieToTheRight.bodySize) {
         return false;
       }

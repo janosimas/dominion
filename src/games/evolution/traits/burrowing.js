@@ -8,8 +8,9 @@ class Burrowing extends Trait {
     this.canBeAttackedBy.bind(this);
   }
 
-  canBeAttackedBy(defendingSpecie, attackerSpecie) {
-    return defendingSpecie.isHungry();
+  canBeAttackedBy(attackerSpecie, G) {
+    const {specie} = this.getSpecie(G);
+    return specie.isHungry();
   }
 }
 

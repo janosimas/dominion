@@ -14,6 +14,18 @@ const selectSpecie = (G, ctx, specieIndex) => {
   return state;
 };
 
+const triggerEndPhaseTraits = (state, ctx) => {
+  for (const player of state.players) {
+    for (const specie of player.species) {
+      for (const trait of specie.traits) {
+        if (trait.onPhaseEnd) {
+          trait.onPhaseEnd(state, ctx);
+        }
+      }
+    }
+  }
+};
+
 const attackOtherSpecie = (G, ctx, attackedPlayerIndex, defendingSpecieIndex) => {
   const state = getState(G, ctx);
   const player = currentPlayer(state, ctx);
@@ -33,7 +45,7 @@ const attackOtherSpecie = (G, ctx, attackedPlayerIndex, defendingSpecieIndex) =>
   if (!canAttack(specie, defendingSpecies[defendingSpecieIndex])) {
     return G;
   }
-  if (!canBeAttacked(defendingSpecies, defendingSpecieIndex, specie)) {
+  if (!canBeAttacked(defendingSpecies, defendingSpecieIndex, specie, G)) {
     return G;
   }
 
@@ -62,7 +74,7 @@ const Evolution = {
     // create n players for the game
     for (var i = 0; i < ctx.numPlayers; i++) {
       const player = new Player(i, 'Player ' + (i + 1));
-      player.species.push(new Specie(player, 0));
+      player.species.push(new Specie(player.id, 0));
       G.players.push(player);
     }
 
@@ -114,6 +126,7 @@ const Evolution = {
         }
       }
 
+      card.setSpecie(player.id, specieIndex);
       specie.traits.push(card);
       player.selectedCardIndex = undefined;
       return state;
@@ -269,6 +282,8 @@ const Evolution = {
           }
 
           state.secret.selectedCards = undefined;
+
+          triggerEndPhaseTraits(state, ctx);
           return state;
         }
       },
@@ -309,6 +324,8 @@ const Evolution = {
             }
           }
           
+          triggerEndPhaseTraits(state, ctx);
+
           return state;
         },
         onTurnEnd: (G, ctx) => {

@@ -9,7 +9,7 @@ class Climbing extends Trait {
     this.canBeAttackedBy.bind(this);
   }
 
-  canBeAttackedBy(defendingSpecie, attackerSpecie) {
+  canBeAttackedBy(attackerSpecie) {
     for (const attTrait of attackerSpecie.traits) {
       if(attTrait.climbing) {
         return true;
