@@ -18,14 +18,11 @@ class EvolutionBoard extends React.Component {
           this.props.moves.clickOnCardForFood(cardIndex);
         }
       },
-      clickOnSpecie: (specieIndex) => {
-        this.props.moves.selectSpecie(specieIndex);
+      clickOnSpecie: (playerId, specieIndex) => {
+        this.props.moves.clickOnSpecie(playerId, specieIndex);
       },
       clickOnWateringHole: () => {
         this.props.moves.eatFromWateringHole();
-      },
-      attackOtherSpecie: (playerIndex, specieIndex) => {
-        this.props.moves.attackOtherSpecie(playerIndex, specieIndex);
       },
       newTrait: (specieIndex) => {
         this.props.moves.newTrait(specieIndex);
@@ -73,7 +70,8 @@ class EvolutionBoard extends React.Component {
       <div>
         <div className='play-area'>
           <div className='main-board' onClick={this.moves.clickOnWateringHole} >
-            <h3>Available food:</h3>{G.wateringHole}
+            <div><h3>Watering hole:{G.wateringHole}</h3></div>
+            <div><h5>Food bank:{G.foodBank}</h5></div>
           </div>
           <div className='player-board-list'>
             {playersRender}

@@ -3,59 +3,49 @@ import { getState, currentPlayer } from '../utils';
 import Specie from './specie';
 import Player from './player';
 import PHASES from './phases';
-import Ambush from './traits/ambush';
+import BaseTraits from './traits/base_traits';
+import FOOD_TYPE from './food_type';
+import { getCardFromHand, eat, canAttack, canBeAttacked, drawCard } from './utils';
 
-const getCardFromHand = (state, ctx, index) => {
+const selectSpecie = (G, ctx, specieIndex) => {
+  const state = getState(G, ctx);
   const player = currentPlayer(state, ctx);
-  // sanity check
-  if (index < 0 || index > player.hand.length) {
-    return undefined;
+  player.selectedSpecie = specieIndex;
+  return state;
+};
+
+const attackOtherSpecie = (G, ctx, attackedPlayerIndex, defendingSpecieIndex) => {
+  const state = getState(G, ctx);
+  const player = currentPlayer(state, ctx);
+  if (player.selectedSpecie === undefined) {
+    return G;
   }
 
-  const card = player.hand.splice(index, 1)[0];
-  return card;
-};
-
-/**
- * Draw a number of cards from the deck into the player hand
- *
- * if no cards in the deck, shuffle the discard pile
- *
- * @param {Player object} player Player drawing the cards
- * @param {Number} [number=1] Number of cards to draw
- */
-const drawCard = (state, ctx, player, number) => {
-  number = number || 1;
-  for (let index = 0; index < number; index++) {
-    const card = state.secret.traitsDeck.pop();
-    if (!card) {
-      // empty deck
-      break;
-    }
-
-    player.hand.push(card);
+  const specie = player.species[player.selectedSpecie];
+  if (!specie.isHungry()
+    || !specie.isCarnivore()
+    || state.foodBank === 0) {
+    return G;
   }
 
-  return player;
-};
+  const defendingSpecies = state.players[attackedPlayerIndex].species;
+  const defendingSpecie = defendingSpecies[defendingSpecieIndex];
+  if (!canAttack(specie, defendingSpecies[defendingSpecieIndex])) {
+    return G;
+  }
+  if (!canBeAttacked(defendingSpecies, defendingSpecieIndex, specie)) {
+    return G;
+  }
 
-/**
- * Check body size and traits of the attacking specie
- * 
- * @param {Specie} specie 
- * @param {Specie} attackedSpecie
- */
-const canAttack = (specie, attackedSpecie) => {
-  return specie.bodySize > attackedSpecie.bodySize;
-};
+  defendingSpecie.population--;
 
-/**
- * Check traits of the attacked specie
- * @param {Specie} defendingSpecie
- * @param {Specie} specie
- */
-const canBeAttacked = (defendingSpecie, specie) => {
-  return true;
+  const missingFood = specie.population - specie.food;
+  const food = defendingSpecie.bodySize > missingFood ? missingFood : defendingSpecie.bodySize;
+  eat(player.species, player.selectedSpecie, food, state, 'foodBank', FOOD_TYPE.MEAT);
+
+  player.selectedSpecie = undefined;
+  state.endTurn = true;
+  return state;
 };
 
 const Evolution = {
@@ -64,7 +54,8 @@ const Evolution = {
       secret: {},
       players: [],
       discard: [],
-      wateringHole: 0
+      wateringHole: 0,
+      foodBank: 100,
       // playerView: PlayerView.STRIP_SECRETS
     };
 
@@ -73,7 +64,7 @@ const Evolution = {
       G.players.push(new Player(i, 'Player '+(i+1)));
     }
 
-    G.secret.traitsDeck = ctx.random.Shuffle(Ambush);
+    G.secret.traitsDeck = ctx.random.Shuffle(BaseTraits);
     
     return G;
   },
@@ -121,6 +112,12 @@ const Evolution = {
       const specie = player.species[specieIndex];
       if(specie.traits.length >= 4) {
         return G;
+      }
+
+      for (const trait of specie.traits) {
+        if(trait.name === player.selectedCard.name) {
+          return G;
+        }
       }
 
       specie.traits.push(player.selectedCard);
@@ -176,11 +173,32 @@ const Evolution = {
     },
     //////////////////////////////////////////
     // eat phase actions
-    selectSpecie: (G, ctx, specieIndex) => {
+    clickOnSpecie: (G, ctx, playerId, specieIndex) => {
       const state = getState(G, ctx);
       const player = currentPlayer(state, ctx);
-      player.selectedSpecie = specieIndex;
-      return state;
+      if (playerId === player.id) {
+        // select specie
+        if (player.selectedSpecie === undefined) {
+          return selectSpecie(G, ctx, specieIndex);
+        }
+      
+        // deselect specie
+        if(player.selectedSpecie === specieIndex) {
+          player.selectedSpecie = undefined;
+          return state;
+        }
+
+        // change selection (not carnivore)
+        const specie = player.species[specieIndex];
+        if (playerId === player.id && !specie.isCarnivore()) {
+          return selectSpecie(G, ctx, specieIndex);
+        }
+
+        // attack owned specie
+        return attackOtherSpecie(G, ctx, playerId, specieIndex);
+      } else {
+        return attackOtherSpecie(G, ctx, playerId, specieIndex);
+      }
     },
     eatFromWateringHole: (G, ctx) => {
       const state = getState(G, ctx);
@@ -190,50 +208,19 @@ const Evolution = {
       }
 
       const specie = player.species[player.selectedSpecie];
-      if (!specie.isHungry()) {
+      if (!specie.isHungry()
+          || specie.isCarnivore()
+          || state.wateringHole === 0) {
         return G;
       }
 
-      state.wateringHole--;
-      specie.food++;
-      if(specie.food > specie.population) {
-        specie.food = specie.population;
-      }
-
+      let food = 1;
+      eat(player.species, player.selectedSpecie, food, state, 'wateringHole', FOOD_TYPE.PLANT);
+      
       player.selectedSpecie = undefined;
       state.endTurn = true;
       return state;
-    },
-    attackOtherSpecie: (G, ctx, attackedPlayerIndex, attackedSpecieIndex) => {
-      const state = getState(G, ctx);
-      const player = currentPlayer(state, ctx);
-      if (player.selectedSpecie === undefined) {
-        return G;
-      }
-
-      const specie = player.species[player.selectedSpecie];
-      if (specie.population === specie.food) {
-        return G;
-      }
-
-      const attackedSpecie = state.players[attackedPlayerIndex].species[attackedSpecieIndex];
-      if(!canAttack(specie, attackedSpecie)) {
-        return G;
-      }
-      if (!canBeAttacked(attackedSpecie, specie)) {
-        return G;
-      }
-
-      attackedSpecie.population--;
-
-      const missingFood = specie.population - specie.food;
-      const food = attackedSpecie.bodySize > missingFood ? missingFood : attackedSpecie.bodySize;
-      specie.food += food;
-
-      player.selectedSpecie = undefined;
-      state.endTurn = true;
-      return state;
-    },
+    }
     //////////////////////////////////////////
   },
   flow: {
@@ -263,16 +250,31 @@ const Evolution = {
           const state = getState(G, ctx);
           state.secret.selectedCards = [];
           for (const player of state.players) {
+            drawCard(state, ctx, player, 4);
             // drawCard(state, ctx, player, 4 + player.species.length);
-            drawCard(state, ctx, player, 3);
           }
           return state;
         },
         onPhaseEnd: (G, ctx) => {
           const state = getState(G, ctx);
+          let food = 0;
           for (const card of state.secret.selectedCards) {
-            state.wateringHole+=card.food;
+            food+=card.food;
           }
+
+          if (food > state.foodBank) {
+            food = state.foodBank;
+          }
+
+          if(food > 0) {
+            state.foodBank -= food;
+          }
+
+          state.wateringHole += food;
+          if (state.wateringHole < 0) {
+            state.wateringHole = 0;
+          }
+
           state.secret.selectedCards = undefined;
           return state;
         }
@@ -304,7 +306,7 @@ const Evolution = {
       },
       {
         name: PHASES.EAT_PHASE, 
-        allowedMoves: ['selectSpecie', 'eatFromWateringHole', 'attackOtherSpecie'],
+        allowedMoves: ['clickOnSpecie', 'eatFromWateringHole'],
         onPhaseEnd: (G, ctx) => {
           const state = getState(G, ctx);
           for (const player of state.players) {

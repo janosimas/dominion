@@ -5,13 +5,14 @@ import Trait from './trait';
 const name = 'Ambush';
 const types = [];
 
-const cards = [];
-cards.push(new Trait(name, types, 5));
-cards.push(new Trait(name, types, 5));
-cards.push(new Trait(name, types, 5));
-cards.push(new Trait(name, types, 6));
-cards.push(new Trait(name, types, 6));
-cards.push(new Trait(name, types, 7));
+const AmbushCards = [];
+AmbushCards.push(new Trait(name, types, -3));
+AmbushCards.push(new Trait(name, types, -2));
+AmbushCards.push(new Trait(name, types, -1));
+AmbushCards.push(new Trait(name, types, 0));
+AmbushCards.push(new Trait(name, types, 1));
+AmbushCards.push(new Trait(name, types, 2));
+AmbushCards.push(new Trait(name, types, 3));
 
 
-export default cards;
+export default AmbushCards;

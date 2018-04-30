@@ -32,10 +32,18 @@ class PlayerBoard extends React.Component {
     const handRender = player.hand.map((card, index)  => {
       return  <Card 
         className='card'
-        isFaceUp={true}
+        isFaceUp={currentPlayer === this.props.player.id}
         canHover={currentPlayer === player.id} 
         onClick={clickOnCard && (() => clickOnCard(index))} 
-        front={card.name}
+        front={
+          <div>
+            <div className='name'>
+              {card.name}
+            </div>
+            <div className='food'>
+              {card.food}
+            </div>
+          </div>}
         key={index} />;
     });
 
@@ -60,9 +68,11 @@ class PlayerBoard extends React.Component {
         <div className='player-name'>
           {player.name}
         </div>
-        <div className='player-hand'>
-          {handRender}
-        </div>
+        {
+          <div className='player-hand'>
+            {handRender}
+          </div>
+        }
         <div className='species-list'>
           {speciesRender}
         </div>

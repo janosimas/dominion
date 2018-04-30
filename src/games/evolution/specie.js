@@ -6,10 +6,32 @@ class Specie {
     this.traits = [];
 
     this.isHungry.bind(this);
+    this.isCarnivore.bind(this);
+    this.canBeAttackedBy.bind(this);
+  }
+
+  canBeAttackedBy(attackerSpecie) {
+    for (const trait of this.traits) {
+      if (trait.checkAttackerTrait && !trait.canBeAttackedBy(attackerSpecie)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   isHungry() {
     return this.food < this.population;
+  }
+
+  isCarnivore() {
+    for (const trait of this.traits) {
+      if(trait.carnivore) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 

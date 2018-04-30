@@ -7,7 +7,10 @@
 
 .main-board {
   display: flex;
-  flex: 1 1 50px;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
   background: coral;
   width: 80%;
   align-items: center;
@@ -35,14 +38,26 @@
 
 .player-hand {
   display: flex;
-  flex: 0 1 145px;
+  flex: 0 1 150px;
   flex-direction: row;
   flex-wrap: wrap;
   align-content: flex-start;
 }
 
 .card {
-  margin: 2px;
+  position: relative;
+  margin: 5px;
+}
+
+.card .name {
+  position: absolute;
+  top: 0px
+}
+
+.card .food {
+  position: absolute;
+  bottom: 0px;
+  right: 5%;
 }
 
 .species-list {
@@ -58,11 +73,19 @@
 
 .specie-board {
   border-radius:10%;
-  border: 5px black;
+  border: 5px solid black;
   background: #2ecc40;
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+}
+
+.highlight-blue {
+  border: 5px solid blue;
+}
+
+.highlight-red {
+  border: 5px solid red;
 }
 
 .specie-traits {
@@ -75,7 +98,9 @@
 }
 
 .trait {
-  background: orange;
+  border-radius: 5px;
+  border: 1px solid red;
+  padding: 2px;
 }
 
 .specie-values {
