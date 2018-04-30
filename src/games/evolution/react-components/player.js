@@ -16,7 +16,7 @@ class PlayerBoard extends React.Component {
     let clickOnCard = undefined;
     let createNewSpecie = undefined;
     const phase = this.props.ctx.phase;
-    if (currentPlayer === this.props.player.id) {
+    if (currentPlayer === player.id) {
       switch (phase) {
       case PHASES.CARD_ACTION_PHASE:
         createNewSpecie = this.props.moves.createNewSpecie;
@@ -30,8 +30,12 @@ class PlayerBoard extends React.Component {
     }
 
     const handRender = player.hand.map((card, index)  => {
+      let className = 'card';
+      if (currentPlayer === player.id && player.selectedCardIndex === index) {
+        className +=' highlight-green';
+      }
       return  <Card 
-        className='card'
+        className={className}
         isFaceUp={currentPlayer === this.props.player.id}
         canHover={currentPlayer === player.id} 
         onClick={clickOnCard && (() => clickOnCard(index))} 

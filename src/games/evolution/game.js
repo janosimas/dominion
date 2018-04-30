@@ -86,26 +86,16 @@ const Evolution = {
     // cards action phase
     clickOnCard: (G, ctx, index) => {
       const state = getState(G, ctx);
-      const card = getCardFromHand(state, ctx, index);
-      if (!card) {
-        return G;
-      }
-
       const player = currentPlayer(state, ctx);
-      // if the player change his mind,
-      // put the old card back in his hand
-      if (player.selectedCard) {
-        player.hand.push(player.selectedCard);
-      }
 
-      player.selectedCard = card;
+      player.selectedCardIndex = index;
       return state;
     },
 
     newTrait: (G, ctx, specieIndex) => {
       const state = getState(G, ctx);
       const player = currentPlayer(state, ctx);
-      if (!player.selectedCard) {
+      if (player.selectedCardIndex === undefined) {
         return G;
       }
 
@@ -114,21 +104,22 @@ const Evolution = {
         return G;
       }
 
+      const card = getCardFromHand(state, ctx, player.selectedCardIndex);
       for (const trait of specie.traits) {
-        if(trait.name === player.selectedCard.name) {
+        if(trait.name === card.name) {
+          player.hand.push(card);
           return G;
         }
       }
 
-      specie.traits.push(player.selectedCard);
-
-      player.selectedCard = undefined;
+      specie.traits.push(card);
+      player.selectedCardIndex = undefined;
       return state;
     },
     increasePopulation: (G, ctx, specieIndex) => {
       const state = getState(G, ctx);
       const player = currentPlayer(state, ctx);
-      if (!player.selectedCard) {
+      if (player.selectedCardIndex === undefined) {
         return G;
       }
 
@@ -137,15 +128,15 @@ const Evolution = {
         return G;
       }
 
+      getCardFromHand(state, ctx, player.selectedCardIndex);
       specie.population++;
-
-      player.selectedCard = undefined;
+      player.selectedCardIndex = undefined;
       return state;
     },
     increaseBodySize: (G, ctx, specieIndex) => {
       const state = getState(G, ctx);
       const player = currentPlayer(state, ctx);
-      if (!player.selectedCard) {
+      if (player.selectedCardIndex === undefined) {
         return G;
       }
 
@@ -154,21 +145,21 @@ const Evolution = {
         return G;
       }
 
+      getCardFromHand(state, ctx, player.selectedCardIndex);
       specie.bodySize++;
-
-      player.selectedCard = undefined;
+      player.selectedCardIndex = undefined;
       return state;
     },
     createNewSpecie: (G, ctx, position) => {
       const state = getState(G, ctx);
       const player = currentPlayer(state, ctx);
-      if (!player.selectedCard) {
+      if (player.selectedCardIndex === undefined) {
         return G;
       }
 
+      getCardFromHand(state, ctx, player.selectedCardIndex);
       player.species.splice(position, 0, new Specie());
-
-      player.selectedCard = undefined;
+      player.selectedCardIndex = undefined;
       return state;
     },
     //////////////////////////////////////////

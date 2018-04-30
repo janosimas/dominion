@@ -73,7 +73,7 @@
 
 .specie-board {
   border-radius:10%;
-  border: 5px solid black;
+  border: 1px solid black;
   background: #2ecc40;
   display: flex;
   flex: 1 1 auto;
@@ -81,11 +81,19 @@
 }
 
 .highlight-blue {
-  border: 5px solid blue;
+  border: 5px double blue;
 }
 
 .highlight-red {
-  border: 5px solid red;
+  border: 5px double red;
+}
+
+.highlight-yellow {
+  border: 5px double yellow;
+}
+
+.highlight-green {
+  border: 5px double rgb(0, 255, 242);
 }
 
 .specie-traits {
@@ -105,7 +113,6 @@
 
 .specie-values {
   display: flex;
-  flex: 1 1 0px;
   flex-direction: row;
   justify-content: center;
 }
