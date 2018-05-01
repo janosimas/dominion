@@ -3,7 +3,7 @@ import Trait from './trait';
 
 class DefensiveHerding extends Trait {
   constructor(food) {
-    super('DefensiveHerding', [], food);
+    super('Defensive Herding', [], food);
 
     this.canBeAttackedBy.bind(this);
   }

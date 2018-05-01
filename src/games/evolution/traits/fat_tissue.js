@@ -3,7 +3,7 @@ import PHASES from '../phases';
 
 class FatTissue extends Trait {
   constructor(food) {
-    super('FatTissue', [], food);
+    super('Fat Tissue', [], food);
     this.storedFood = 0;
 
     this.canEat.bind(this);
