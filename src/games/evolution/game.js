@@ -38,8 +38,8 @@ const triggerOnPhaseBeginTraits = (state, ctx) => {
   }
 };
 
-const triggerBeforeAttack = (defendingSpecies, specie, state, ctx) => {
-  for (const trait of defendingSpecies.traits) {
+const triggerBeforeAttack = (defendingSpecie, specie, state, ctx) => {
+  for (const trait of defendingSpecie.traits) {
     if (trait.beforeAttack) {
       trait.beforeAttack(specie, state, ctx);
     }
@@ -54,7 +54,7 @@ const attackOtherSpecie = (G, ctx, attackedPlayerIndex, defendingSpecieIndex) =>
   }
 
   const specie = player.species[player.selectedSpecie];
-  if (!specie.isHungry()
+  if (!specie.canEat(state)
     || !specie.isCarnivore()
     || state.foodBank === 0) {
     return G;
@@ -69,7 +69,7 @@ const attackOtherSpecie = (G, ctx, attackedPlayerIndex, defendingSpecieIndex) =>
     return G;
   }
 
-  triggerBeforeAttack(defendingSpecies, specie, state, ctx);
+  triggerBeforeAttack(defendingSpecie, specie, state, ctx);
 
   defendingSpecie.population--;
 
@@ -236,7 +236,7 @@ const Evolution = {
       }
 
       const specie = player.species[player.selectedSpecie];
-      if (!specie.isHungry()
+      if (!specie.canEat(state)
           || specie.isCarnivore()
           || state.wateringHole === 0) {
         return G;

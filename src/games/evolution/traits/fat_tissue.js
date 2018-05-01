@@ -1,28 +1,34 @@
 import Trait from './trait';
 import PHASES from '../phases';
 
+const FatTissueName = 'Fat Tissue';
+
 class FatTissue extends Trait {
   constructor(food) {
-    super('Fat Tissue', [], food);
+    super(FatTissueName, [], food);
     this.storedFood = 0;
 
     this.canEat.bind(this);
     this.storeFood.bind(this);
   }
 
-  canEat() {
+  canEat(G) {
     if(this.isHungry()) {
       return true;
     }
 
-    return this.storedFood < this.specie.bodySize;
+    const {specie} = this.getSpecie(G);
+    return this.storedFood < specie.bodySize;
   }
 
-  storeFood(food) {
+  storeFood(food, state) {
     this.storedFood += food;
-    if (this.storedFood > this.specie.bodySize) {
-      this.storedFood = this.specie.bodySize;
+    const { specie } = this.getSpecie(state);
+    if (this.storedFood > specie.bodySize) {
+      this.storedFood = specie.bodySize;
     }
+
+    this.name = FatTissueName+' ('+this.storedFood+')';
   }
 
   onPhaseEnd(state, ctx) {
@@ -37,6 +43,7 @@ class FatTissue extends Trait {
         }
 
         this.storedFood -= specie.food;
+        this.name = FatTissueName + ' (' + this.storedFood + ')';
       }
     }
   }

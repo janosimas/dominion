@@ -11,11 +11,7 @@ const eat = (species, specieIndex, food, state, source, type, triggerEffects = t
   }
 
   state[source] -= food;
-  specie.food += food;
-  // sanity check
-  if (specie.food > specie.population) {
-    specie.food = specie.population;
-  }
+  specie.eat(food, state);
 
   if (triggerEffects) {
     triggerSpecieGotFood(species, specieIndex, state, source, type);

@@ -8,10 +8,39 @@ class Specie {
     this.traits = [];
 
     this.isHungry.bind(this);
+    this.canEat.bind(this);
     this.isCarnivore.bind(this);
     this.canBeAttackedBy.bind(this);
     this.attack.bind(this);
     this.defense.bind(this);
+    this.setIndex.bind(this);
+    this.getPlayer.bind(this);
+    this.eat.bind(this);
+  }
+
+  eat(food, state) {
+    const hungry = this.population - this.food;
+    const tempFood = food - (hungry - food);
+    this.food += tempFood;
+    
+    // sanity check
+    if (this.food > this.population) {
+      this.food = this.population;
+    }
+
+    food -= tempFood;
+    for (const trait of this.traits) {
+      if (trait.storeFood) {
+        if (trait.storeFood(food, state)) {
+          return true;
+        }
+      }
+    }
+    
+  }
+
+  setIndex(specieIdx) {
+    this.index = specieIdx;
   }
 
   getPlayer(G) {
@@ -47,6 +76,22 @@ class Specie {
     }
 
     return true;
+  }
+
+  canEat(G) {
+    if(this.isHungry()) {
+      return true;
+    }
+
+    for (const trait of this.traits) {
+      if(trait.canEat) {
+        if(trait.canEat(G)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   isHungry() {
