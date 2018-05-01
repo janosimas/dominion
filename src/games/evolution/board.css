@@ -68,7 +68,7 @@
 }
 
 .between-species {
-  width: 20px;
+  flex: 1 1 auto;
 }
 
 .specie-board {
@@ -76,7 +76,7 @@
   border: 1px solid black;
   background: #2ecc40;
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 1 100px;
   flex-direction: column;
 }
 
