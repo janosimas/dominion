@@ -38,7 +38,7 @@ class Specie {
 
     for (const trait of this.traits) {
       if (trait.storeFood) {
-        trait.storeFood(food, state)
+        trait.storeFood(food, state);
       }
     }
     
