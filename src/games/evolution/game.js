@@ -278,8 +278,7 @@ const Evolution = {
           const state = getState(G, ctx);
           state.secret.selectedCards = [];
           for (const player of state.players) {
-            drawCard(state, ctx, player, 4);
-            // drawCard(state, ctx, player, 4 + player.species.length);
+            drawCard(state, ctx, player, 4 + player.species.length);
           }
 
           triggerOnPhaseBeginTraits(state, ctx);
