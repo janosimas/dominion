@@ -14,12 +14,24 @@ const selectSpecie = (G, ctx, specieIndex) => {
   return state;
 };
 
-const triggerEndPhaseTraits = (state, ctx) => {
+const triggerOnPhaseEndTraits = (state, ctx) => {
   for (const player of state.players) {
     for (const specie of player.species) {
       for (const trait of specie.traits) {
         if (trait.onPhaseEnd) {
           trait.onPhaseEnd(state, ctx);
+        }
+      }
+    }
+  }
+};
+
+const triggerOnPhaseBeginTraits = (state, ctx) => {
+  for (const player of state.players) {
+    for (const specie of player.species) {
+      for (const trait of specie.traits) {
+        if (trait.onPhaseEnd) {
+          trait.onPhaseBegin(state, ctx);
         }
       }
     }
@@ -259,6 +271,8 @@ const Evolution = {
             drawCard(state, ctx, player, 4);
             // drawCard(state, ctx, player, 4 + player.species.length);
           }
+
+          triggerOnPhaseBeginTraits(state, ctx);
           return state;
         },
         onPhaseEnd: (G, ctx) => {
@@ -283,7 +297,7 @@ const Evolution = {
 
           state.secret.selectedCards = undefined;
 
-          triggerEndPhaseTraits(state, ctx);
+          triggerOnPhaseEndTraits(state, ctx);
           return state;
         }
       },
@@ -310,11 +324,26 @@ const Evolution = {
           } else {
             return false;
           }
+        },
+        onPhaseBegin(G, ctx) {
+          const state = getState(G, ctx);
+          triggerOnPhaseBeginTraits(state, ctx);
+          return state;
+        },
+        onPhaseEnd: (G, ctx) => {
+          const state = getState(G, ctx);
+          triggerOnPhaseEndTraits(state, ctx);
+          return state;
         }
       },
       {
         name: PHASES.EAT_PHASE, 
         allowedMoves: ['clickOnSpecie', 'eatFromWateringHole'],
+        onPhaseBegin(G, ctx) {
+          const state = getState(G, ctx);
+          triggerOnPhaseBeginTraits(state, ctx);
+          return state;
+        },
         onPhaseEnd: (G, ctx) => {
           const state = getState(G, ctx);
           for (const player of state.players) {
@@ -324,7 +353,7 @@ const Evolution = {
             }
           }
           
-          triggerEndPhaseTraits(state, ctx);
+          triggerOnPhaseEndTraits(state, ctx);
 
           return state;
         },
