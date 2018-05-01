@@ -30,10 +30,18 @@ const triggerOnPhaseBeginTraits = (state, ctx) => {
   for (const player of state.players) {
     for (const specie of player.species) {
       for (const trait of specie.traits) {
-        if (trait.onPhaseEnd) {
+        if (trait.onPhaseBegin) {
           trait.onPhaseBegin(state, ctx);
         }
       }
+    }
+  }
+};
+
+const triggerBeforeAttack = (defendingSpecies, specie, state, ctx) => {
+  for (const trait of defendingSpecies.traits) {
+    if (trait.beforeAttack) {
+      trait.beforeAttack(specie, state, ctx);
     }
   }
 };
@@ -60,6 +68,8 @@ const attackOtherSpecie = (G, ctx, attackedPlayerIndex, defendingSpecieIndex) =>
   if (!canBeAttacked(defendingSpecies, defendingSpecieIndex, specie, G)) {
     return G;
   }
+
+  triggerBeforeAttack(defendingSpecies, specie, state, ctx);
 
   defendingSpecie.population--;
 
