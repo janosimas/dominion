@@ -20,7 +20,10 @@ class Specie {
 
   eat(food, state) {
     const hungry = this.population - this.food;
-    const tempFood = food - (hungry - food);
+    let tempFood = food;
+    if(tempFood > hungry) {
+      tempFood = hungry;
+    }
     this.food += tempFood;
     
     // sanity check
@@ -29,11 +32,13 @@ class Specie {
     }
 
     food -= tempFood;
+    if(food === 0) {
+      return;
+    }
+
     for (const trait of this.traits) {
       if (trait.storeFood) {
-        if (trait.storeFood(food, state)) {
-          return true;
-        }
+        trait.storeFood(food, state)
       }
     }
     
