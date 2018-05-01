@@ -195,7 +195,7 @@ const Evolution = {
       }
 
       getCardFromHand(state, ctx, player.selectedCardIndex);
-      player.species.splice(position, 0, new Specie(player, position));
+      player.species.splice(position, 0, new Specie(player.id, position));
       player.selectedCardIndex = undefined;
       return state;
     },
