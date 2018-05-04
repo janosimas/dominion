@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Specie from '../specie';
+import {Specie} from '../specie';
 import PHASES from '../phases';
 
 class SpecieBoard extends React.Component {
@@ -47,7 +47,7 @@ class SpecieBoard extends React.Component {
         }
         
         if(player.selectedSpecie === undefined
-            && specie.isHungry()) {
+            && specie.canEat()) {
           specieBoardClass +=' highlight-blue';
         }
       }

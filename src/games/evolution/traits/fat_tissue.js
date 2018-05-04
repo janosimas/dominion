@@ -12,12 +12,11 @@ class FatTissue extends Trait {
     this.storeFood.bind(this);
   }
 
-  canEat(G) {
-    if(this.isHungry()) {
+  canEat(specie) {
+    if (specie.isHungry()) {
       return true;
     }
 
-    const {specie} = this.getSpecie(G);
     return this.storedFood < specie.bodySize;
   }
 

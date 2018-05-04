@@ -8,7 +8,7 @@ class Symbiosis extends Trait {
   }
 
   canBeAttackedBy(attackerSpecie, G) {
-    const player = this.getPlayer(G);
+    const {player} = this.getSpecie(G);
     if((player.species.length) > this.index+1) {
       const specieToTheRight = player.species(this.index+1);
       if (this.bodySize < specieToTheRight.bodySize) {

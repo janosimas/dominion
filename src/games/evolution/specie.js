@@ -83,14 +83,14 @@ class Specie {
     return true;
   }
 
-  canEat(G) {
+  canEat() {
     if(this.isHungry()) {
       return true;
     }
 
     for (const trait of this.traits) {
       if(trait.canEat) {
-        if(trait.canEat(G)) {
+        if(trait.canEat(this)) {
           return true;
         }
       }
@@ -114,4 +114,20 @@ class Specie {
   }
 }
 
-export default Specie;
+class SpecieId {
+  constructor(playerId, specieIdx) {
+    this.specieIdx = specieIdx;
+    this.playerId = playerId;
+  }
+
+  getSpecie(G) {
+    const player = this.getPlayer(G);
+    return player.species[this.specieIdx];
+  }
+
+  getPlayer(G) {
+    return G.players[this.playerId];
+  }
+}
+
+export { Specie, SpecieId };

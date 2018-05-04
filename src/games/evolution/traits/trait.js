@@ -14,7 +14,7 @@ class Trait {
 
   getSpecie(state) {
     const player = state.players[this.playerIndex];
-    const specie = player.specie[this.specieIdx];
+    const specie = player.species[this.specieIdx];
 
     return { player: player, specie: specie };
   }

@@ -64,7 +64,7 @@ class PlayerBoard extends React.Component {
 
     const size = speciesRender.length;
     for (let index = size; index >= 0 ; index--) {
-      speciesRender.splice(index, 0, <div className='between-species' key={100 + index} onClick={() => createNewSpecie(index)} ></div>);
+      speciesRender.splice(index, 0, <div className='between-species' key={100 + index} onClick={createNewSpecie && (() => createNewSpecie(index))} ></div>);
     }
 
     return (

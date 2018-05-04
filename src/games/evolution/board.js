@@ -36,16 +36,23 @@ class EvolutionBoard extends React.Component {
       createNewSpecie: (specieIndex) => {
         this.props.moves.createNewSpecie(specieIndex);
       },
+      onClickEndTurn:() =>{
+        this.props.moves.endTurn();
+      }
     };
   }
-  
+
   renderControls(G, ctx) {
     let player = currentPlayer(G, ctx);
 
     let controls = [];
     controls.push(<div key='current-player'>Current player: {player.name}</div>);
     controls.push(<div key='current-phase'>Current phase: {ctx.phase}</div>);
-    
+
+    if (ctx.phase !== PHASES.PLAY_FOOD_PHASE) {
+      controls.push(<button key='end-turn' type="button" onClick={() => this.moves.onClickEndTurn()}>end turn</button>);
+    }
+
     return controls;
   }
 

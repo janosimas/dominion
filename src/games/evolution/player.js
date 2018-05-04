@@ -6,6 +6,7 @@ class Player {
     this.hand = [];
     // players start with one specie
     this.species = [];
+    this.endTurn = false;
   }
 }
 

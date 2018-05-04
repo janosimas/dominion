@@ -1,6 +1,6 @@
 import { Game } from 'boardgame.io/dist/core';
 import { getState, currentPlayer } from '../utils';
-import Specie from './specie';
+import { Specie } from './specie';
 import Player from './player';
 import PHASES from './phases';
 import BaseTraits from './traits/base_traits';
@@ -14,28 +14,37 @@ const selectSpecie = (G, ctx, specieIndex) => {
   return state;
 };
 
-const triggerOnPhaseEndTraits = (state, ctx) => {
+const loosePopulation = (state, ctx, defendingSpecies, defendingSpecieIndex) => {
+  const defendingSpecie = defendingSpecies[defendingSpecieIndex];
+  defendingSpecie.population--;
+
+  if(defendingSpecie.population === 0) {
+    defendingSpecies.splice(defendingSpecieIndex, 1);
+    for (let index = 0; index < defendingSpecies.length; index++) {
+      const specie = defendingSpecies[index];
+      specie.setIndex(index);
+    }
+  }
+};
+
+const triggerPlayerSpecieTrait = (state, ctx, functionName) => {
   for (const player of state.players) {
     for (const specie of player.species) {
       for (const trait of specie.traits) {
-        if (trait.onPhaseEnd) {
-          trait.onPhaseEnd(state, ctx);
+        if (trait[functionName]) {
+          trait[functionName](state, ctx);
         }
       }
     }
   }
 };
 
+const triggerOnPhaseEndTraits = (state, ctx) => {
+  triggerPlayerSpecieTrait(state, ctx, 'onPhaseEnd');
+};
+
 const triggerOnPhaseBeginTraits = (state, ctx) => {
-  for (const player of state.players) {
-    for (const specie of player.species) {
-      for (const trait of specie.traits) {
-        if (trait.onPhaseBegin) {
-          trait.onPhaseBegin(state, ctx);
-        }
-      }
-    }
-  }
+  triggerPlayerSpecieTrait(state, ctx, 'onPhaseBegin');
 };
 
 const triggerBeforeAttack = (defendingSpecie, specie, state, ctx) => {
@@ -54,7 +63,7 @@ const attackOtherSpecie = (G, ctx, attackedPlayerIndex, defendingSpecieIndex) =>
   }
 
   const specie = player.species[player.selectedSpecie];
-  if (!specie.canEat(state)
+  if (!specie.canEat()
     || !specie.isCarnivore()
     || state.foodBank === 0) {
     return G;
@@ -65,13 +74,14 @@ const attackOtherSpecie = (G, ctx, attackedPlayerIndex, defendingSpecieIndex) =>
   if (!canAttack(specie, defendingSpecies[defendingSpecieIndex])) {
     return G;
   }
+
   if (!canBeAttacked(defendingSpecies, defendingSpecieIndex, specie, G)) {
     return G;
   }
 
   triggerBeforeAttack(defendingSpecie, specie, state, ctx);
 
-  defendingSpecie.population--;
+  loosePopulation(state, ctx, defendingSpecies, defendingSpecieIndex);
 
   const missingFood = specie.population - specie.food;
   const food = defendingSpecie.bodySize > missingFood ? missingFood : defendingSpecie.bodySize;
@@ -105,6 +115,15 @@ const Evolution = {
     return G;
   },
   moves: {
+    endTurn: (G, ctx) => {
+      const state = getState(G, ctx);
+      const player = currentPlayer(state, ctx);
+      player.endTurn = true;
+      state.endTurn = true;
+      return state;
+    },
+    //////////////////////////////////////////
+    // play card for food phase
     clickOnCardForFood: (G, ctx, index) => {
       const state = getState(G, ctx);
       const card = getCardFromHand(state, ctx, index);
@@ -117,7 +136,6 @@ const Evolution = {
 
       return state;
     },
-
     //////////////////////////////////////////
     // cards action phase
     clickOnCard: (G, ctx, index) => {
@@ -236,7 +254,7 @@ const Evolution = {
       }
 
       const specie = player.species[player.selectedSpecie];
-      if (!specie.canEat(state)
+      if (!specie.canEat()
           || specie.isCarnivore()
           || state.wateringHole === 0) {
         return G;
@@ -312,12 +330,20 @@ const Evolution = {
       },
       {
         name: PHASES.CARD_ACTION_PHASE,
-        allowedMoves: ['clickOnCard', 'newTrait', 'increasePopulation', 'increaseBodySize', 'createNewSpecie'],
+        allowedMoves: ['clickOnCard', 'newTrait', 'increasePopulation', 'increaseBodySize', 'createNewSpecie', 'endTurn'],
         endTurnIf: (G, ctx) => {
           const player = currentPlayer(G, ctx);
           // end turn if the player has no card in hand
           // and no selected card
-          return (!player.hand.length && !player.selectedCard);
+          return (!player.hand.length && !player.selectedCard) || G.endTurn;
+        },
+        onTurnBegin: (G, ctx) => {
+          return G;
+        },
+        onTurnEnd: (G, ctx) => {
+          const state = getState(G, ctx);
+          state.endTurn = undefined;
+          return state;
         },
         endPhaseIf: (G, ctx) => {
           let endPhase = true;
@@ -327,8 +353,13 @@ const Evolution = {
               break;
             }  
           }
+
+          let playersPassTurn = true;
+          for (const player of G.players) {
+            playersPassTurn = playersPassTurn && player.endTurn;
+          }
           
-          if(endPhase) {
+          if (endPhase || playersPassTurn) {
             return PHASES.EAT_PHASE;
           } else {
             return false;
@@ -341,14 +372,31 @@ const Evolution = {
         },
         onPhaseEnd: (G, ctx) => {
           const state = getState(G, ctx);
+
+          for (const player of state.players) {
+            player.endTurn = false;
+          }
+
           triggerOnPhaseEndTraits(state, ctx);
           return state;
         }
       },
       {
         name: PHASES.EAT_PHASE, 
-        allowedMoves: ['clickOnSpecie', 'eatFromWateringHole'],
-        onPhaseBegin(G, ctx) {
+        allowedMoves: ['clickOnSpecie', 'eatFromWateringHole', 'endTurn'],
+        endPhaseIf: (G, ctx) => {
+          let playersPassTurn = true;
+          for (const player of G.players) {
+            playersPassTurn = playersPassTurn && player.endTurn;
+          }
+
+          if (playersPassTurn) {
+            return PHASES.PLAY_FOOD_PHASE;
+          } else {
+            return false;
+          }
+        },
+        onPhaseBegin: (G, ctx) => {
           const state = getState(G, ctx);
           triggerOnPhaseBeginTraits(state, ctx);
           return state;
@@ -356,14 +404,34 @@ const Evolution = {
         onPhaseEnd: (G, ctx) => {
           const state = getState(G, ctx);
           for (const player of state.players) {
-            for (const specie of player.species) {
+            for (let index = 0; index < player.species.length; index++) {
+              const specie = player.species[index];
+
+              while(specie.population > specie.food) {
+                loosePopulation(state, ctx, player.species, index);
+              }
+
               player.food += specie.food;
               specie.food = 0;
             }
           }
+
+          for (let index = 0; index < state.players.length; index++) {
+            const player = state.players[index];
+            if(player.species.length === 0) {
+              player.species.push(new Specie(index, 0));
+            }
+            player.endTurn = false;
+          }
           
           triggerOnPhaseEndTraits(state, ctx);
 
+          return state;
+        },
+        onTurnBegin: (G, ctx) => {
+          const state = getState(G, ctx);
+          const player = currentPlayer(G, ctx);
+          player.endTurn = false;
           return state;
         },
         onTurnEnd: (G, ctx) => {

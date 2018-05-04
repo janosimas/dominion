@@ -135,3 +135,13 @@
   margin: 1px;
   background: green;
 }
+
+.controls {
+  background: #ffffff;
+  position: fixed;
+  right: 0;
+  top: 0;
+  margin: 2%;
+  padding: 2%;
+  border: 1px solid black;
+}
