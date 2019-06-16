@@ -1,3 +1,6 @@
+
+# This project has HUGE design flaws as I was using for testing the framework. I plan on rewriting but it won't happen any time soon.
+
 # Dominion: a boardgame.io test
 
 This is a sample project testing the boardgame.io for creating a computer version of a board game. I selected Dominion, because I have it, I know the game and I can select simple cards to test and evolve the game.
